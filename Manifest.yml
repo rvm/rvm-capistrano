@@ -2,5 +2,6 @@
 - Manifest.yml
 - README.md
 - Rakefile
+- lib/rvm-capistrano.rb
 - lib/rvm/capistrano.rb
 - lib/rvm/capistrano/version.rb

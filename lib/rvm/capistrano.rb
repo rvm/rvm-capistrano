@@ -1,9 +1,5 @@
 # Recipes for using RVM on a server with capistrano.
 
-unless Capistrano::Configuration.respond_to?(:instance)
-  abort "rvm/capistrano requires Capistrano >= 2."
-end
-
 Capistrano::Configuration.instance(true).load do
 
   # Taken from the capistrano code.
@@ -25,7 +21,7 @@ Capistrano::Configuration.instance(true).load do
   end
 
   # Let users set the type of their rvm install.
-  _cset(:rvm_type, :system)
+  _cset(:rvm_type, :user)
 
   # Define rvm_path
   # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
@@ -111,6 +107,6 @@ end
 
 # E.g, to use ree and rails 3:
 #
-#   require 'rvm/capistrano'
+#   require 'rvm-capistrano'
 #   set :rvm_ruby_string, "ree@rails3"
 #
