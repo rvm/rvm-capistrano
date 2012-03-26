@@ -19,6 +19,8 @@ The following code will:
 - detect `ruby@gemset` used for deployment
 - install RVM and Ruby on `cap deploy:detup`
 
+Example:
+
     set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"")
     
     before 'deploy:setup', 'rvm:install_rvm'
