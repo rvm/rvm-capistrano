@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.name        = 'rvm-capistrano'
   spec.version     = ::RVM::Capistrano::VERSION
   spec.platform    = Gem::Platform::RUBY
-  spec.authors     = ['Wayne E. Seguin', 'Michał Papis']
+  spec.authors     = ['Wayne E. Seguin', 'Michal Papis']
   spec.email       = ['wayneeseguin@gmail.com','mpapis@gmail.com']
   spec.homepage    = 'https://rvm.beginrescueend.com/integration/capistrano'
   spec.summary     =

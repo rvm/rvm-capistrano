@@ -1,3 +1,7 @@
+=== 1.0.2 / 2012-03-28
+
+* Fix the bundler auto require problem
+
 === 1.0.1 / 2012-03-26
 
 * Updated to latest integration code for installing rvm/ruby
