@@ -1,3 +1,7 @@
+=== 1.1.0 / 2012-04-29
+
+* Fix rvm installation task to use sudo and rvm_path when needed
+
 === 1.0.2 / 2012-03-28
 
 * Fix the bundler auto require problem
