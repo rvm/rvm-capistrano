@@ -73,8 +73,17 @@ Capistrano::Configuration.instance(true).load do
       set :rvm_install_shell, :zsh
     EOF
     task :install_rvm do
-      run "#{rvm_install_shell} -s #{rvm_install_type} \
-< <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)", :shell => "#{rvm_install_shell}"
+      command="curl https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer | "
+      case rvm_type
+      when :root, :system
+        if use_sudo == false
+          raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}."
+        else
+          command << "sudo "
+        end
+      end
+      command << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
+      run "#{command}", :shell => "#{rvm_install_shell}"
     end
 
     desc <<-EOF
