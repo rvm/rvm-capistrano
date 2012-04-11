@@ -17,7 +17,7 @@ RVM / Capistrano integration is now available as a separate gem
 The following code will:
 
 - detect `ruby@gemset` used for deployment
-- install RVM and Ruby on `cap deploy:detup`
+- install RVM and Ruby on `cap deploy:setup`
 
 Example:
 
