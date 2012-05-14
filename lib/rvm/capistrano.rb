@@ -53,6 +53,9 @@ Capistrano::Configuration.instance(true).load do
   # Use the default ruby on the server, by default :)
   _cset(:rvm_ruby_string, "default")
 
+  # Default sudo state
+  _cset(:rvm_install_with_sudo, false)
+
   # Let users set the install type and shell of their choice.
   _cset(:rvm_install_type, :stable)
   _cset(:rvm_install_shell, :bash)
@@ -73,17 +76,17 @@ Capistrano::Configuration.instance(true).load do
       set :rvm_install_shell, :zsh
     EOF
     task :install_rvm do
-      command="curl https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer | "
+      command_fetch="curl https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer | "
       case rvm_type
       when :root, :system
-        if use_sudo == false
-          raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}."
+        if use_sudo == false && rvm_install_with_sudo == false
+          raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}. You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true"
         else
-          command << "sudo "
+          command_install = "#{sudo} "
         end
       end
-      command << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
-      run "#{command}", :shell => "#{rvm_install_shell}"
+      command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
+      run "#{command_fetch} #{command_install}", :shell => "#{rvm_install_shell}"
     end
 
     desc <<-EOF
