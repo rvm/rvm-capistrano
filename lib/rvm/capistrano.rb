@@ -111,6 +111,19 @@ Capistrano::Configuration.instance(true).load do
         end
       end
     end
+
+    desc "Create gemset"
+    task :create_gemset do
+      ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+      if %w( release_path default ).include? "#{ruby}"
+        raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
+      else
+        if gemset
+          run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+        end
+      end
+    end
+
   end
 end
 
