@@ -108,7 +108,7 @@ Capistrano::Configuration.instance(true).load do
       if %w( release_path default ).include? "#{ruby}"
         raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
       else
-        run "#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads}", :shell => "#{rvm_install_shell}"
+        run "#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}", :shell => "#{rvm_install_shell}"
         if gemset
           run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
         end

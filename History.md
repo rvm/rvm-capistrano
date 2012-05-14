@@ -1,6 +1,8 @@
 === 1.2.0 / 2012-05-14
 
-* Add task to create gemset
+* Add task to create gemset, fix #8
+* Add rvm_install_ruby_params, fix #9
+* Improved installing RVM with sudo, fix #10
 * Use the new RVM installer
 
 === 1.1.0 / 2012-04-29
