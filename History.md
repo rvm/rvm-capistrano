@@ -1,4 +1,4 @@
-=== 1.2.0 / 2012-05-14
+=== 1.2.0 / 2012-05-19
 
 * Add task to create gemset, fix #8
 * Add rvm_install_ruby_params, fix #9
