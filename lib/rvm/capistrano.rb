@@ -84,6 +84,8 @@ Capistrano::Configuration.instance(true).load do
         else
           command_install = "#{sudo} "
         end
+      else
+        command_install = ''
       end
       command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
       run "#{command_fetch} #{command_install}", :shell => "#{rvm_install_shell}"
