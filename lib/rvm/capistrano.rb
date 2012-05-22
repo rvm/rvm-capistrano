@@ -12,8 +12,13 @@ Capistrano::Configuration.instance(true).load do
   set :default_shell do
     shell = File.join(rvm_bin_path, "rvm-shell")
     ruby = rvm_ruby_string.to_s.strip
-    if "#{ruby}" == "release_path"
+    case ruby
+    when "release_path"
       shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
+    when "local"
+      ruby = (ENV['GEM_HOME'] || "").gsub(/.*\//, "")
+      raise "Failed to get ruby version from GEM_HOME. Please make sure rvm is loaded!" if ruby.empty?
+      shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'"
     else
       shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
     end
