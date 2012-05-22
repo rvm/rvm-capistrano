@@ -1,13 +1,18 @@
+### 1.2.1 / 2012-05-22
+
+* Add `set :rvm_ruby_string, :local`, merged #4
+* Fix `command_install` edge cases, merged #12, closes #13
+
 ## 1.2.0 / 2012-05-19
 
 * Add task to create gemset, fix #8
-* Add rvm_install_ruby_params, fix #9
+* Add `rvm_install_ruby_params`, fix #9
 * Improved installing RVM with sudo, fix #10
 * Use the new RVM installer
 
 ## 1.1.0 / 2012-04-29
 
-* Fix rvm installation task to use sudo and rvm_path when needed
+* Fix rvm installation task to use sudo and `rvm_path` when needed
 
 ### 1.0.2 / 2012-03-28
 
