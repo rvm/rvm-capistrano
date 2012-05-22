@@ -30,7 +30,7 @@ Example:
 
     require "rvm/capistrano"
 
-## To use the ruby version specified in the local .rvmrc use
+## To use the ruby version currently active locally
 
     set :rvm_ruby_string, :local
 
