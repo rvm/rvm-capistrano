@@ -15,9 +15,9 @@ Capistrano::Configuration.instance(true).load do
     case ruby
     when "release_path"
       shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
-    when "rvmrc"
-      ruby = File.read('.rvmrc').gsub(/^rvm\s+/, "").strip
-      shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
+    when "local"
+      ruby = ENV['GEM_HOME'].gsub(/.*\//, "")
+      shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'"
     else
       shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
     end
