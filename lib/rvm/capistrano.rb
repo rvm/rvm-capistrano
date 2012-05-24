@@ -69,6 +69,9 @@ Capistrano::Configuration.instance(true).load do
   _cset(:rvm_install_ruby, :install)
   _cset(:rvm_install_ruby_threads, "$(cat /proc/cpuinfo | grep vendor_id | wc -l)")
 
+  # Pass no special params to the ruby build by default
+  _cset(:rvm_install_ruby_params, '')
+
   namespace :rvm do
     desc <<-EOF
       Install RVM of the given choice to the server.
