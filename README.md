@@ -1,6 +1,6 @@
 # rvm-capistrano
 
-https://rvm.beginrescueend.com/integration/capistrano
+https://rvm.io/integration/capistrano/#gem
 
 ## Description
 
