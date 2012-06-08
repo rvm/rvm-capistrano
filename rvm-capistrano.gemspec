@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://rvm.beginrescueend.com/integration/capistrano'
   spec.summary     =
   spec.description = 'RVM / Capistrano Integration Gem'
+  spec.license     = 'MIT'
 
   spec.add_dependency 'capistrano', '>=2.0.0'
 
