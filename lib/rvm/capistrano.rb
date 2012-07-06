@@ -1,4 +1,5 @@
 # Recipes for using RVM on a server with capistrano.
+require 'capistrano/configuration' if !Kernel.const_defined? 'Capistrano'
 
 Capistrano::Configuration.instance(true).load do
 
