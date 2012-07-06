@@ -1,4 +1,5 @@
 # Recipes for using RVM on a server with capistrano.
+require 'capistrano/configuration'
 
 Capistrano::Configuration.instance(true).load do
 
