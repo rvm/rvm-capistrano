@@ -138,7 +138,7 @@ Capistrano::Configuration.instance(true).load do
     end
 
   end
-end
+end if Kernel.const_defined? 'Capistrano'
 
 # E.g, to use ree and rails 3:
 #
