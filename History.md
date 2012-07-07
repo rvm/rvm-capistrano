@@ -1,3 +1,12 @@
+### 1.2.3 / 2012-07-07
+
+* Add LICENSE, merged #14
+* Only load code if the Capistrano constant is defined, fix #23, merged #26
+
+### 1.2.2 / 2012-05-24
+
+* Default rvm_install_ruby_params to an empty string - fixes #15
+
 ### 1.2.1 / 2012-05-22
 
 * Add `set :rvm_ruby_string, :local`, merged #4
