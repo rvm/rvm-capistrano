@@ -84,7 +84,7 @@ Capistrano::Configuration.instance(true).load do
       set :rvm_install_shell, :zsh
     EOF
     task :install_rvm do
-      command_fetch="curl -L get.rvm.io | "
+      command_fetch="curl -sL get.rvm.io | "
       case rvm_type
       when :root, :system
         if use_sudo == false && rvm_install_with_sudo == false
