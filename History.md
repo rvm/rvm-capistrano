@@ -1,3 +1,7 @@
+### 1.2.5 / 2012-07-17
+
+* silence `rvm:rvm_install`, closes #22
+
 ### 1.2.4 / 2012-07-17
 
 * fix detecting Capistrano constant in Ruby 1.8.7, fix #28, closes #23
@@ -9,7 +13,7 @@
 
 ### 1.2.2 / 2012-05-24
 
-* Default rvm_install_ruby_params to an empty string - fixes #15
+* Default `rvm_install_ruby_params` to an empty string - fixes #15
 
 ### 1.2.1 / 2012-05-22
 
