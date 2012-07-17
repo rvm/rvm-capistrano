@@ -1,145 +1,145 @@
 # Recipes for using RVM on a server with capistrano.
 
 module Capistrano
-Configuration.instance(true).load do
+  Configuration.instance(true).load do
 
-  # Taken from the capistrano code.
-  def _cset(name, *args, &block)
-    unless exists?(name)
-      set(name, *args, &block)
+    # Taken from the capistrano code.
+    def _cset(name, *args, &block)
+      unless exists?(name)
+        set(name, *args, &block)
+      end
     end
-  end
 
-  set :default_shell do
-    shell = File.join(rvm_bin_path, "rvm-shell")
-    ruby = rvm_ruby_string.to_s.strip
-    case ruby
-    when "release_path"
-      shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
-    when "local"
-      ruby = (ENV['GEM_HOME'] || "").gsub(/.*\//, "")
-      raise "Failed to get ruby version from GEM_HOME. Please make sure rvm is loaded!" if ruby.empty?
-      shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'"
-    else
-      shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
+    set :default_shell do
+      shell = File.join(rvm_bin_path, "rvm-shell")
+      ruby = rvm_ruby_string.to_s.strip
+      case ruby
+      when "release_path"
+        shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
+      when "local"
+        ruby = (ENV['GEM_HOME'] || "").gsub(/.*\//, "")
+        raise "Failed to get ruby version from GEM_HOME. Please make sure rvm is loaded!" if ruby.empty?
+        shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'"
+      else
+        shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
+      end
+      shell
     end
-    shell
-  end
 
-  # Let users set the type of their rvm install.
-  _cset(:rvm_type, :user)
+    # Let users set the type of their rvm install.
+    _cset(:rvm_type, :user)
 
-  # Define rvm_path
-  # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
-  # rvm to boostrap using the proper path.  This is being lost in Capistrano due to the lack of a
-  # full environment.
-  _cset(:rvm_path) do
-    case rvm_type
-    when :root, :system
-      "/usr/local/rvm"
-    when :local, :user, :default
-      "$HOME/.rvm/"
-    else
-      rvm_type.to_s.empty? ?  "$HOME/.rvm" : rvm_type.to_s
-    end
-  end
-
-  # Let users override the rvm_bin_path
-  _cset(:rvm_bin_path) do
-    case rvm_type
-    when :root, :system
-      "/usr/local/rvm/bin"
-    when :local, :user, :default
-      "$HOME/.rvm/bin"
-    else
-      rvm_type.to_s.empty? ?  "#{rvm_path}/bin" : rvm_type.to_s
-    end
-  end
-
-  # Use the default ruby on the server, by default :)
-  _cset(:rvm_ruby_string, "default")
-
-  # Default sudo state
-  _cset(:rvm_install_with_sudo, false)
-
-  # Let users set the install type and shell of their choice.
-  _cset(:rvm_install_type, :stable)
-  _cset(:rvm_install_shell, :bash)
-
-  # Let users set the (re)install for ruby.
-  _cset(:rvm_install_ruby, :install)
-  _cset(:rvm_install_ruby_threads, "$(cat /proc/cpuinfo | grep vendor_id | wc -l)")
-
-  # Pass no special params to the ruby build by default
-  _cset(:rvm_install_ruby_params, '')
-
-  namespace :rvm do
-    desc <<-EOF
-      Install RVM of the given choice to the server.
-      By default RVM "stable" is installed, change with:
-
-      set :rvm_install_type, :head
-
-      By default BASH is used for installer, change with:
-
-      set :rvm_install_shell, :zsh
-    EOF
-    task :install_rvm do
-      command_fetch="curl -L get.rvm.io | "
+    # Define rvm_path
+    # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
+    # rvm to boostrap using the proper path.  This is being lost in Capistrano due to the lack of a
+    # full environment.
+    _cset(:rvm_path) do
       case rvm_type
       when :root, :system
-        if use_sudo == false && rvm_install_with_sudo == false
-          raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}. You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true"
+        "/usr/local/rvm"
+      when :local, :user, :default
+        "$HOME/.rvm/"
+      else
+        rvm_type.to_s.empty? ?  "$HOME/.rvm" : rvm_type.to_s
+      end
+    end
+
+    # Let users override the rvm_bin_path
+    _cset(:rvm_bin_path) do
+      case rvm_type
+      when :root, :system
+        "/usr/local/rvm/bin"
+      when :local, :user, :default
+        "$HOME/.rvm/bin"
+      else
+        rvm_type.to_s.empty? ?  "#{rvm_path}/bin" : rvm_type.to_s
+      end
+    end
+
+    # Use the default ruby on the server, by default :)
+    _cset(:rvm_ruby_string, "default")
+
+    # Default sudo state
+    _cset(:rvm_install_with_sudo, false)
+
+    # Let users set the install type and shell of their choice.
+    _cset(:rvm_install_type, :stable)
+    _cset(:rvm_install_shell, :bash)
+
+    # Let users set the (re)install for ruby.
+    _cset(:rvm_install_ruby, :install)
+    _cset(:rvm_install_ruby_threads, "$(cat /proc/cpuinfo | grep vendor_id | wc -l)")
+
+    # Pass no special params to the ruby build by default
+    _cset(:rvm_install_ruby_params, '')
+
+    namespace :rvm do
+      desc <<-EOF
+        Install RVM of the given choice to the server.
+        By default RVM "stable" is installed, change with:
+
+        set :rvm_install_type, :head
+
+        By default BASH is used for installer, change with:
+
+        set :rvm_install_shell, :zsh
+      EOF
+      task :install_rvm do
+        command_fetch="curl -L get.rvm.io | "
+        case rvm_type
+        when :root, :system
+          if use_sudo == false && rvm_install_with_sudo == false
+            raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}. You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true"
+          else
+            command_install = "#{sudo} "
+          end
         else
-          command_install = "#{sudo} "
+          command_install = ''
         end
-      else
-        command_install = ''
+        command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
+        run "#{command_fetch} #{command_install}", :shell => "#{rvm_install_shell}"
       end
-      command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
-      run "#{command_fetch} #{command_install}", :shell => "#{rvm_install_shell}"
-    end
 
-    desc <<-EOF
-      Install RVM ruby to the server, create gemset if needed.
-      By default ruby is installed, you can reinstall with:
+      desc <<-EOF
+        Install RVM ruby to the server, create gemset if needed.
+        By default ruby is installed, you can reinstall with:
 
-      set :rvm_install_ruby, :reinstall
+        set :rvm_install_ruby, :reinstall
 
-      By default ruby is compiled using all CPU cores, change with:
+        By default ruby is compiled using all CPU cores, change with:
 
-      set :rvm_install_ruby_threads, :reinstall
+        set :rvm_install_ruby_threads, :reinstall
 
-      By default BASH is used for installer, change with:
+        By default BASH is used for installer, change with:
 
-      set :rvm_install_shell, :zsh
-    EOF
-    task :install_ruby do
-      ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
-      if %w( release_path default ).include? "#{ruby}"
-        raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
-      else
-        run "#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}", :shell => "#{rvm_install_shell}"
-        if gemset
-          run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+        set :rvm_install_shell, :zsh
+      EOF
+      task :install_ruby do
+        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        if %w( release_path default ).include? "#{ruby}"
+          raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
+        else
+          run "#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}", :shell => "#{rvm_install_shell}"
+          if gemset
+            run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+          end
         end
       end
-    end
 
-    desc "Create gemset"
-    task :create_gemset do
-      ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
-      if %w( release_path default ).include? "#{ruby}"
-        raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
-      else
-        if gemset
-          run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+      desc "Create gemset"
+      task :create_gemset do
+        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        if %w( release_path default ).include? "#{ruby}"
+          raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
+        else
+          if gemset
+            run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+          end
         end
       end
-    end
 
-  end
-end if const_defined? :Configuration
+    end
+  end if const_defined? :Configuration
 end
 
 # E.g, to use ree and rails 3:
