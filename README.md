@@ -8,7 +8,7 @@ RVM / Capistrano Integration Gem
 
 ## Installation
 
-RVM / Capistrano integration is now available as a separate gem
+RVM / Capistrano integration is available as a separate gem
 
     $ gem install rvm-capistrano
 
@@ -33,6 +33,15 @@ Example:
 ## To use the ruby version currently active locally
 
     set :rvm_ruby_string, :local
+
+## Tasks
+
+```bash
+$ cap -T rvm
+cap rvm:create_gemset        # Create gemset
+cap rvm:install_ruby         # Install RVM ruby to the server, create gemset ...
+cap rvm:install_rvm          # Install RVM of the given choice to the server.
+```
 
 ## Development
 
