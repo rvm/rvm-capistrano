@@ -1,6 +1,7 @@
 # Recipes for using RVM on a server with capistrano.
 
-Capistrano::Configuration.instance(true).load do
+module Capistrano
+Configuration.instance(true).load do
 
   # Taken from the capistrano code.
   def _cset(name, *args, &block)
@@ -138,7 +139,8 @@ Capistrano::Configuration.instance(true).load do
     end
 
   end
-end if Kernel.const_defined? 'Capistrano'
+end if const_defined? :Configuration
+end
 
 # E.g, to use ree and rails 3:
 #
