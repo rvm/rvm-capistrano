@@ -85,19 +85,34 @@ module Capistrano
         set :rvm_install_shell, :zsh
       EOF
       task :install_rvm do
-        command_fetch="curl -L get.rvm.io | "
-        case rvm_type
-        when :root, :system
-          if use_sudo == false && rvm_install_with_sudo == false
-            raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}. You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true"
+        command_curl_start = <<-EOF.gsub(/^\s*/, '')
+          export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config;
+          mkdir ${CURL_HOME}/;
+          {
+            [[ -r ${HOME}/.curlrc ]] && cat ${HOME}/.curlrc;
+            echo "silent";
+            echo "show-error";
+          } > $CURL_HOME/.curlrc
+        EOF
+        command_curl_end = "rm -rf $CURL_HOME"
+        command_fetch    = "curl -L get.rvm.io"
+        command_install  = case rvm_type
+          when :root, :system
+            if use_sudo == false && rvm_install_with_sudo == false
+              raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}. You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true"
+            else
+              "#{sudo} "
+            end
           else
-            command_install = "#{sudo} "
+            ''
           end
-        else
-          command_install = ''
-        end
         command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
-        run "#{command_fetch} #{command_install}", :shell => "#{rvm_install_shell}"
+        _command = <<-EOF
+          #{command_curl_start};
+          #{command_fetch} | #{command_install};
+          #{command_curl_end}
+        EOF
+        run "#{_command}".gsub(/[\s\n]+/, ' '), :shell => "#{rvm_install_shell}"
       end
 
       desc <<-EOF
