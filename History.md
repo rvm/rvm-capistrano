@@ -1,3 +1,7 @@
+### 1.2.4 / 2012-07-17
+
+* fix detecting Capistrano constant in Ruby 1.8.7, fix #28, closes #23
+
 ### 1.2.3 / 2012-07-07
 
 * Add LICENSE, merged #14
