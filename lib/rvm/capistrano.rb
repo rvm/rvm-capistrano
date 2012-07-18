@@ -159,6 +159,6 @@ end
 
 # E.g, to use ree and rails 3:
 #
-#   require 'rvm-capistrano'
+#   require 'rvm/capistrano'
 #   set :rvm_ruby_string, "ree@rails3"
 #
