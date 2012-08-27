@@ -1,3 +1,7 @@
+### 1.2.6 / 2012-08-28
+
+* fix undefined use_sudo, merged #32
+
 ### 1.2.5 / 2012-07-17
 
 * silence `rvm:rvm_install`, closes #22
