@@ -98,7 +98,7 @@ module Capistrano
         command_fetch    = "curl -L get.rvm.io"
         command_install  = case rvm_type
           when :root, :system
-            if use_sudo == false && rvm_install_with_sudo == false
+            if fetch(:use_sudo, true) == false && rvm_install_with_sudo == false
               raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}. You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true"
             else
               "#{sudo} "
