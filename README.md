@@ -12,6 +12,12 @@ RVM / Capistrano integration is available as a separate gem
 
     $ gem install rvm-capistrano
 
+Or if **capistrano** gem is aleady in `Gemfife` then also **rvm-capistrano** should be added there:
+
+    $ echo "gem 'rvm-capistrano'" >> Gemfile
+    $ bundle install
+
+
 ## Example
 
 The following code will:
@@ -29,6 +35,7 @@ Example:
     before 'deploy:setup', 'rvm:create_gemset' # only create gemset
 
     require "rvm/capistrano"
+
 
 ## To use the ruby version currently active locally
 
