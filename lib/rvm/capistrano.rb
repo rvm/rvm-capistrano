@@ -153,6 +153,16 @@ module Capistrano
         end
       end
 
+      desc "Install a gem, 'cap rvm:install_gem GEM=my_gem'."
+      task :install_gem do
+        run "#{File.join(rvm_bin_path, "rvm")} #{rvm_ruby_string} do gem install #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
+      end
+
+      desc "Uninstall a gem, 'cap rvm:uninstall_gem GEM=my_gem'."
+      task :uninstall_gem do
+        run "#{File.join(rvm_bin_path, "rvm")} #{rvm_ruby_string} do gem uninstall --no-executables #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
+      end
+
     end
   end if const_defined? :Configuration
 end
