@@ -1,3 +1,7 @@
+### 1.2.7 / 2012-09-09
+
+* add rvm:(un)install_gem, merged #32
+
 ### 1.2.6 / 2012-08-28
 
 * fix undefined use_sudo, merged #32

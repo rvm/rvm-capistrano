@@ -48,6 +48,8 @@ $ cap -T rvm
 cap rvm:create_gemset        # Create gemset
 cap rvm:install_ruby         # Install RVM ruby to the server, create gemset ...
 cap rvm:install_rvm          # Install RVM of the given choice to the server.
+cap rvm:install_gem   GEM=my_gem  # Install gem {my_gem} on the server using selected ruby.
+cap rvm:uninstall_gem GEM=my_gem  # Uninstall gem {my_gem} from the server selected ruby.
 ```
 
 ## Development
