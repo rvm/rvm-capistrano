@@ -74,6 +74,18 @@ module Capistrano
     _cset(:rvm_install_ruby_params, '')
 
     namespace :rvm do
+
+      command_curl_start = <<-EOF.gsub(/^\s*/, '')
+        export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config;
+        mkdir ${CURL_HOME}/;
+        {
+          [[ -r ${HOME}/.curlrc ]] && cat ${HOME}/.curlrc;
+          echo "silent";
+          echo "show-error";
+        } > $CURL_HOME/.curlrc
+      EOF
+      command_curl_end = "rm -rf $CURL_HOME"
+
       desc <<-EOF
         Install RVM of the given choice to the server.
         By default RVM "stable" is installed, change with:
@@ -85,16 +97,6 @@ module Capistrano
         set :rvm_install_shell, :zsh
       EOF
       task :install_rvm do
-        command_curl_start = <<-EOF.gsub(/^\s*/, '')
-          export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config;
-          mkdir ${CURL_HOME}/;
-          {
-            [[ -r ${HOME}/.curlrc ]] && cat ${HOME}/.curlrc;
-            echo "silent";
-            echo "show-error";
-          } > $CURL_HOME/.curlrc
-        EOF
-        command_curl_end = "rm -rf $CURL_HOME"
         command_fetch    = "curl -L get.rvm.io"
         command_install  = case rvm_type
           when :root, :system
@@ -134,10 +136,16 @@ module Capistrano
         if %w( release_path default ).include? "#{ruby}"
           raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
         else
-          run "#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}", :shell => "#{rvm_install_shell}"
+          command_install = "#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}"
           if gemset
-            run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+            command_install << "; #{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}"
           end
+          _command = <<-EOF
+            #{command_curl_start};
+            #{command_install};
+            #{command_curl_end}
+          EOF
+          run "#{_command}".gsub(/[\s\n]+/, ' '), :shell => "#{rvm_install_shell}"
         end
       end
 
