@@ -56,6 +56,9 @@ module Capistrano
       end
     end
 
+    # Let users configure a path to export/import gemsets
+    _cset(:rvm_gemset_path, "#{rvm_path}/gemsets")
+
     # Use the default ruby on the server, by default :)
     _cset(:rvm_ruby_string, "default")
 
@@ -73,10 +76,13 @@ module Capistrano
     # Pass no special params to the ruby build by default
     _cset(:rvm_install_ruby_params, '')
 
+    # Additional rvm packages to install.
+    _cset(:rvm_install_pkgs, '')
+
     namespace :rvm do
 
       command_curl_start = <<-EOF.gsub(/^\s*/, '')
-        export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config;
+        export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config.$$;
         mkdir ${CURL_HOME}/;
         {
           [[ -r ${HOME}/.curlrc ]] && cat ${HOME}/.curlrc;
@@ -149,6 +155,23 @@ module Capistrano
         end
       end
 
+      desc <<-EOF   
+        Install RVM packages to the server.
+
+        This must come before the 'rvm:install_ruby' task is called.
+        
+        The package list is empty by default.  Specifiy the packages to install with:
+
+        set :rvm_install_pkgs, %w[libyaml curl]
+
+        Full list of packages available at https://rvm.io/packages/ or by running 'rvm pkg'.
+      EOF
+      task :install_pkgs do
+        rvm_install_pkgs.each do |pkg|
+          run "#{File.join(rvm_bin_path, "rvm")} pkg install #{pkg}", :shell => "#{rvm_install_shell}"
+        end
+      end
+
       desc "Create gemset"
       task :create_gemset do
         ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
@@ -157,6 +180,44 @@ module Capistrano
         else
           if gemset
             run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+          end
+        end
+      end
+
+      desc <<-EOF
+        Import file contents to the current RVM ruby gemset.
+
+        The gemset filename must match :rvm_ruby_string.gems and be located in :rvm_gemset_path.
+        :rvm_gemset_path defaults to :rvm_path/gemsets
+
+        The gemset can be created with 'cap rvm:gemset_export'.
+      EOF
+      task :import_gemset do
+        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        if %w( release_path default ).include? "#{ruby}"
+          raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
+        else
+          if gemset
+            run "#{File.join(rvm_bin_path, "rvm-shell")} #{rvm_ruby_string} rvm gemset import #{File.join(rvm_gemset_path, "#{rvm_ruby_string}.gems")}", :shell => "#{rvm_install_shell}"
+          end
+        end
+      end
+
+      desc <<-EOF
+        Export the current RVM ruby gemset contents to a file.
+
+        The gemset filename will match :rvm_ruby_string.gems and be located in :rvm_gemset_path.
+        :rvm_gemset_path defaults to :rvm_path/gemsets
+
+        The gemset can be imported with 'cap rvm:gemset_import'.
+      EOF
+      task :export_gemset do
+        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        if %w( release_path default ).include? "#{ruby}"
+          raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
+        else
+          if gemset
+            run "#{File.join(rvm_bin_path, "rvm-shell")} #{rvm_ruby_string} rvm gemset export > #{File.join(rvm_gemset_path, "#{rvm_ruby_string}.gems")}", :shell => "#{rvm_install_shell}"
           end
         end
       end
