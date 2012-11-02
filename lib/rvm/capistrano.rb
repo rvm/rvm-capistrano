@@ -76,7 +76,7 @@ module Capistrano
     namespace :rvm do
 
       command_curl_start = <<-EOF.gsub(/^\s*/, '')
-        export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config;
+        export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config.$$;
         mkdir ${CURL_HOME}/;
         {
           [[ -r ${HOME}/.curlrc ]] && cat ${HOME}/.curlrc;
