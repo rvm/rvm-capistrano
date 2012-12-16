@@ -109,6 +109,14 @@ module Capistrano
         end
       end
 
+      def rvm_task(name,&block)
+        if fetch(:rvm_require_role,nil).nil?
+          task name, block
+        else
+          task name, :roles => fetch(:rvm_require_role), block
+        end
+      end
+
       desc <<-EOF
         Install RVM of the given choice to the server.
         By default RVM "stable" is installed, change with:
@@ -119,7 +127,7 @@ module Capistrano
 
         set :rvm_install_shell, :zsh
       EOF
-      task :install_rvm do
+      rvm_task :install_rvm, :roles => :rvm do
         command_fetch    = "curl -L get.rvm.io"
         command_install  = case rvm_type
           when :root, :system
@@ -153,7 +161,7 @@ module Capistrano
 
         set :rvm_install_shell, :zsh
       EOF
-      task :install_ruby do
+      rvm_task :install_ruby, :roles => :rvm do
         ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
@@ -178,14 +186,14 @@ module Capistrano
 
         Full list of packages available at https://rvm.io/packages/ or by running 'rvm pkg'.
       EOF
-      task :install_pkgs do
+      rvm_task :install_pkgs, :roles => :rvm do
         rvm_install_pkgs.each do |pkg|
           run "#{File.join(rvm_bin_path, "rvm")} pkg install #{pkg}", :shell => "#{rvm_install_shell}"
         end
       end
 
       desc "Create gemset"
-      task :create_gemset do
+      rvm_task :create_gemset, :roles => :rvm do
         ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
@@ -204,7 +212,7 @@ module Capistrano
 
         The gemset can be created with 'cap rvm:gemset_export'.
       EOF
-      task :import_gemset do
+      rvm_task :import_gemset, :roles => :rvm do
         ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
@@ -223,7 +231,7 @@ module Capistrano
 
         The gemset can be imported with 'cap rvm:gemset_import'.
       EOF
-      task :export_gemset do
+      rvm_task :export_gemset, :roles => :rvm do
         ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
@@ -235,12 +243,12 @@ module Capistrano
       end
 
       desc "Install a gem, 'cap rvm:install_gem GEM=my_gem'."
-      task :install_gem do
+      rvm_task :install_gem, :roles => :rvm do
         run "#{File.join(rvm_bin_path, "rvm")} #{rvm_ruby_string} do gem install #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
       end
 
       desc "Uninstall a gem, 'cap rvm:uninstall_gem GEM=my_gem'."
-      task :uninstall_gem do
+      rvm_task :uninstall_gem, :roles => :rvm do
         run "#{File.join(rvm_bin_path, "rvm")} #{rvm_ruby_string} do gem uninstall --no-executables #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
       end
 
