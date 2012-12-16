@@ -84,16 +84,21 @@ module Capistrano
 
     namespace :rvm do
 
-      command_curl_start = <<-EOF.gsub(/^\s*/, '')
-        export CURL_HOME=${TMPDIR:-${HOME}}/.rvm-curl-config.$$;
-        mkdir ${CURL_HOME}/;
-        {
-          [[ -r ${HOME}/.curlrc ]] && cat ${HOME}/.curlrc;
-          echo "silent";
-          echo "show-error";
-        } > $CURL_HOME/.curlrc
-      EOF
-      command_curl_end = "rm -rf $CURL_HOME"
+      def run_silent_curl(command)
+        run <<-EOF.gsub(/[\s\n]+/, ' '), :shell => "#{rvm_install_shell}"
+          __LAST_STATUS=0;
+          export CURL_HOME="${TMPDIR:-${HOME}}/.rvm-curl-config.$$";
+          mkdir ${CURL_HOME}/;
+          {
+            [[ -r ${HOME}/.curlrc ]] && cat ${HOME}/.curlrc;
+            echo "silent";
+            echo "show-error";
+          } > $CURL_HOME/.curlrc;
+          #{command} || __LAST_STATUS=$?;
+          rm -rf $CURL_HOME;
+          exit ${__LAST_STATUS}
+        EOF
+      end
 
       desc <<-EOF
         Install RVM of the given choice to the server.
@@ -122,12 +127,7 @@ module Capistrano
         when :root, :system
           command_install << " --add-to-rvm-group #{[rvm_add_to_group].flatten.map(&:to_s).join(",")}"
         end
-        _command = <<-EOF
-          #{command_curl_start};
-          #{command_fetch} | #{command_install};
-          #{command_curl_end}
-        EOF
-        run "#{_command}".gsub(/[\s\n]+/, ' '), :shell => "#{rvm_install_shell}"
+        run_silent_curl "#{command_fetch} | #{command_install}"
       end
 
       def with_rvm_group(command)
@@ -163,12 +163,7 @@ module Capistrano
             command_install << "; "
             command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}")
           end
-          _command = <<-EOF
-            #{command_curl_start};
-            #{command_install};
-            #{command_curl_end}
-          EOF
-          run "#{_command}".gsub(/[\s\n]+/, ' '), :shell => "#{rvm_install_shell}"
+          run_silent_curl command_install
         end
       end
 
