@@ -80,7 +80,7 @@ module Capistrano
     _cset(:rvm_install_pkgs, '')
 
     # By default system installations add deploying user to rvm group. also try :all
-    _cset(:rvm_add_to_group, "#{user}")
+    _cset(:rvm_add_to_group, fetch(:user,"$USER"))
 
     namespace :rvm do
 
