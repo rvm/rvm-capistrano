@@ -79,6 +79,9 @@ module Capistrano
     # Additional rvm packages to install.
     _cset(:rvm_install_pkgs, '')
 
+    # By default system installations add deploying user to rvm group. also try :all
+    _cset(:rvm_add_to_group, "#{user}")
+
     namespace :rvm do
 
       command_curl_start = <<-EOF.gsub(/^\s*/, '')
@@ -115,12 +118,25 @@ module Capistrano
             ''
           end
         command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
+        case rvm_type
+        when :root, :system
+          command_install << " --add-to-rvm-group #{[rvm_add_to_group].flatten.map(&:to_s).join(",")}"
+        end
         _command = <<-EOF
           #{command_curl_start};
           #{command_fetch} | #{command_install};
           #{command_curl_end}
         EOF
         run "#{_command}".gsub(/[\s\n]+/, ' '), :shell => "#{rvm_install_shell}"
+      end
+
+      def with_rvm_group(command)
+        case rvm_type
+        when :root, :system
+          "sg rvm -c \"#{command}\""
+        else
+          command
+        end
       end
 
       desc <<-EOF
@@ -142,9 +158,10 @@ module Capistrano
         if %w( release_path default ).include? "#{ruby}"
           raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
         else
-          command_install = "#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}"
+          command_install = with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}")
           if gemset
-            command_install << "; #{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}"
+            command_install << "; "
+            command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}")
           end
           _command = <<-EOF
             #{command_curl_start};
@@ -155,11 +172,11 @@ module Capistrano
         end
       end
 
-      desc <<-EOF   
+      desc <<-EOF
         Install RVM packages to the server.
 
         This must come before the 'rvm:install_ruby' task is called.
-        
+
         The package list is empty by default.  Specifiy the packages to install with:
 
         set :rvm_install_pkgs, %w[libyaml curl]
@@ -179,7 +196,7 @@ module Capistrano
           raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
         else
           if gemset
-            run "#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}"
+            run with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}")
           end
         end
       end
