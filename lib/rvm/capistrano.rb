@@ -100,6 +100,15 @@ module Capistrano
         EOF
       end
 
+      def with_rvm_group(command)
+        case rvm_type
+        when :root, :system
+          "sg rvm -c \"#{command}\""
+        else
+          command
+        end
+      end
+
       desc <<-EOF
         Install RVM of the given choice to the server.
         By default RVM "stable" is installed, change with:
@@ -128,15 +137,6 @@ module Capistrano
           command_install << " --add-to-rvm-group #{[rvm_add_to_group].flatten.map(&:to_s).join(",")}"
         end
         run_silent_curl "#{command_fetch} | #{command_install}"
-      end
-
-      def with_rvm_group(command)
-        case rvm_type
-        when :root, :system
-          "sg rvm -c \"#{command}\""
-        else
-          command
-        end
       end
 
       desc <<-EOF
