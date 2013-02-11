@@ -10,7 +10,7 @@ module Capistrano
       end
     end
 
-    set :default_shell do
+    set :rvm_shell do
       puts "shell session: #{session}"
       shell = File.join(rvm_bin_path, "rvm-shell")
       ruby = rvm_ruby_string.to_s.strip
@@ -25,6 +25,33 @@ module Capistrano
         shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
       end
       shell
+    end
+    if fetch(:rvm_require_role,nil).nil?
+      set :default_shell, fetch(:rvm_shell)
+    else
+      class << self
+        def run(cmd, options={}, &block)
+          if options[:eof].nil? && !cmd.include?(sudo)
+            options = options.merge(:eof => !block_given?)
+          end
+          shell = options[:shell]
+          options[:shell] = false
+
+          parallel(options) do |session|
+            if shell.nil?
+              session.when "in?(:#{fetch(:rvm_require_role,nil)})", command_with_shell(cmd, fetch(:rvm_shell)), &block
+            end
+            session.else command_with_shell(cmd, shell), &block
+          end
+        end
+        def command_with_shell(cmd, shell=nil)
+          if shell == false
+            cmd
+          else
+            "#{shell || "sh"} -c '#{cmd.gsub(/'/) { |m| "'\\''" }}'"
+          end
+        end
+      end
     end
 
     # Let users set the type of their rvm install.
