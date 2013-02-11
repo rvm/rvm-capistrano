@@ -11,7 +11,6 @@ module Capistrano
     end
 
     set :rvm_shell do
-      puts "shell session: #{session}"
       shell = File.join(rvm_bin_path, "rvm-shell")
       ruby = rvm_ruby_string.to_s.strip
       case ruby
