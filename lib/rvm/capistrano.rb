@@ -98,7 +98,7 @@ module Capistrano
 
     # Let users set the (re)install for ruby.
     _cset(:rvm_install_ruby, :install)
-    _cset(:rvm_install_ruby_threads, "$(cat /proc/cpuinfo | grep vendor_id | wc -l)")
+    _cset(:rvm_install_ruby_threads, "$(cat /proc/cpuinfo 2>/dev/null | (grep vendor_id || echo 'vendor_id : Other';) | wc -l)")
 
     # Pass no special params to the ruby build by default
     _cset(:rvm_install_ruby_params, '')
