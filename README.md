@@ -92,8 +92,8 @@ end
 ## Options
 
 - `:rvm_ruby_string` - which ruby should be loaded
- - `release_path` - load ruby defined in `#{release_path}`
- - `local` - detect local running ruby
+ - `release_path` - load ruby defined in `#{release_path}` - Capistrano variable pointing where code is checked out
+ - `local` - detect local machine running ruby using `GEM_HOME`
  - `<ruby-version>` - specify ruby version to use
 
 - `:rvm_type` - how to detect rvm, default `:user`
