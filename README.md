@@ -10,13 +10,16 @@ RVM / Capistrano Integration Gem
 
 RVM / Capistrano integration is available as a separate gem
 
-    $ gem install rvm-capistrano
+```bash
+$ gem install rvm-capistrano
+```
 
 Or, if the **capistrano** gem is aleady in your `Gemfile`, then add **rvm-capistrano**:
 
-    $ echo "gem 'rvm-capistrano'" >> Gemfile
-    $ bundle install
-
+```bash
+$ echo "gem 'rvm-capistrano'" >> Gemfile
+$ bundle install
+```
 
 ## Example
 
@@ -27,23 +30,93 @@ The following code will:
 
 Example:
 
-    set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"")
-    set :rvm_install_ruby_params, '--1.9'      # for jruby/rbx default to 1.9 mode
-    set :rvm_install_pkgs, %w[libyaml openssl] # package list from https://rvm.io/packages
-    set :rvm_install_ruby_params, '--with-opt-dir=/usr/local/rvm/usr' # package support
+```ruby
+set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"")
+set :rvm_install_ruby_params, '--1.9'      # for jruby/rbx default to 1.9 mode
+set :rvm_install_pkgs, %w[libyaml openssl] # package list from https://rvm.io/packages
+set :rvm_install_ruby_params, '--with-opt-dir=/usr/local/rvm/usr' # package support
 
-    before 'deploy:setup', 'rvm:install_rvm'   # install RVM
-    before 'deploy:setup', 'rvm:install_pkgs'  # install RVM packages before Ruby
-    before 'deploy:setup', 'rvm:install_ruby'  # install Ruby and create gemset, or:
-    before 'deploy:setup', 'rvm:create_gemset' # only create gemset
-    before 'deploy:setup', 'rvm:import_gemset' # import gemset from file
+before 'deploy:setup', 'rvm:install_rvm'   # install RVM
+before 'deploy:setup', 'rvm:install_pkgs'  # install RVM packages before Ruby
+before 'deploy:setup', 'rvm:install_ruby'  # install Ruby and create gemset, or:
+before 'deploy:setup', 'rvm:create_gemset' # only create gemset
+before 'deploy:setup', 'rvm:import_gemset' # import gemset from file
 
-    require "rvm/capistrano"
+require "rvm/capistrano"
+```
 
+### To use the ruby version currently active locally
 
-## To use the ruby version currently active locally
+```ruby
+set :rvm_ruby_string, :local
+```
 
-    set :rvm_ruby_string, :local
+### To restrict rvm to only `:app` servers
+
+Warning, when using `:rvm_require_role` `parallel` is used to select shell per server instead of `:default_shell`
+
+```ruby
+set :rvm_require_role, :app
+require "rvm/capistrano"
+```
+
+The order is important `:rvm_require_role` has to be `set` before `require "rvm/capistrano"`.
+
+### To restrict rvm to only some servers
+
+```ruby
+set :rvm_require_role, :rvm
+require "rvm/capistrano"
+role :rvm, "web1", "web2"
+role :app, "web1", "web2", "web3"
+```
+
+### To control rvm shell manually
+
+```ruby
+require "rvm/capistrano"
+set :default_shell, :bash
+task :example do
+  run "echo 'in rvm'", :shell => fetch(:rvm_shell)
+end
+```
+
+### Disable rvm shell for single command
+
+```ruby
+task :example do
+  run "echo 'not in rvm'", :shell => :bash
+end
+```
+
+## Options
+
+- `:rvm_ruby_string` - which ruby should be loaded
+ - `release_path` - load ruby defined in `#{release_path}`
+ - `local` - detect local running ruby
+ - `<ruby-version>` - specify ruby version to use
+
+- `:rvm_type` - how to detect rvm, default `:user`
+ - `:user` - RVM installed in `$HOME`, user installation (default)
+ - `:system` - RVM installed in `/usr/local`, multiuser installation
+
+- `:rvm_path` - force `$rvm_path`, only overwrite if standard paths can not be used
+- `:rvm_bin_path` - force `$rvm_bin_path`, only overwrite if standard paths can not be used
+- `:rvm_gemset_path` - storage for gem lists files for exporting/importing, by default `$rvm_path/gemsets`
+- `:rvm_install_with_sudo` - when set to `true` forces RVM installation with `sudo` even `:use_sudo` is set to `false`
+
+- `:rvm_install_type` - version of RVM to install, by default `stable`
+ - `stable` - stable version of RVM
+ - `head` - head version of RVM (development)
+ - `latest-1.18` - latest version of RVM 1.18.x
+ - `1.18.4` - selected version
+
+- `:rvm_install_shell` - shell to be used for `rvm` operations, by default `bash`, most likely you do not need to change it
+- `:rvm_install_ruby` - a command used to install ruby, by default `install`, most likely you do not need to change it
+- `:rvm_install_ruby_threads` - number of threads to use for ruby compilation, by default it's number of CPU cores on Linux
+- `:rvm_install_ruby_params` - parameters for ruby, example `--patch railsexpress`
+- `:rvm_install_pkgs` - array of packages to install with `cap rvm:install_pkgs`
+- `:rvm_add_to_group` - user name to add to `rvm` group when RVM is installed with `:rvm_type` `:system`, by default it's the user name that runs deploy
 
 ## Tasks
 
