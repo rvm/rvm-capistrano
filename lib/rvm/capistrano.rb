@@ -280,7 +280,7 @@ module Capistrano
       end
 
     end
-  end if const_defined? :Configuration
+  end if Capistrano.const_defined? :Configuration and Capistrano::Configuration.methods.map(&:to_sym).include? :instance
 end
 
 # E.g, to use ree and rails 3:
