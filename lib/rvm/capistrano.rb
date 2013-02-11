@@ -104,7 +104,7 @@ module Capistrano
     _cset(:rvm_install_ruby_params, '')
 
     # Additional rvm packages to install.
-    _cset(:rvm_install_pkgs, '')
+    _cset(:rvm_install_pkgs, [])
 
     # By default system installations add deploying user to rvm group. also try :all
     _cset(:rvm_add_to_group, fetch(:user,"$USER"))
