@@ -1,7 +1,5 @@
 # rvm-capistrano
 
-https://rvm.io/integration/capistrano/#gem
-
 ## Description
 
 RVM / Capistrano Integration Gem
