@@ -132,4 +132,8 @@ cap rvm:uninstall_gem GEM=my_gem  # Uninstall gem {my_gem} from the server selec
 
 ## Development
 
-    $ rake spec
+SM Framework extension for gem development:
+
+    $ curl -L https://get.smf.sh | sh
+    $ sm ext install gem mpapis/sm_gem
+    $ sm gem --help
