@@ -10,7 +10,7 @@ module Capistrano
       end
     end
 
-    set :rvm_shell do
+    _cset :rvm_shell do
       shell = File.join(rvm_bin_path, "rvm-shell")
       ruby = fetch(:rvm_ruby_string_evaluated).strip
       case ruby
@@ -26,7 +26,7 @@ module Capistrano
       shell
     end
     if fetch(:rvm_require_role,nil).nil?
-      set :default_shell, fetch(:rvm_shell)
+      _cset :default_shell, fetch(:rvm_shell)
     else
       class << self
         def run(cmd, options={}, &block)
