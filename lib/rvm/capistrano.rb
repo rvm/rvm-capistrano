@@ -83,7 +83,7 @@ module Capistrano
       end
     end
 
-    set :rvm_ruby_string_evaluated, do
+    set :rvm_ruby_string_evaluated do
       value = fetch(:rvm_ruby_string, :default)
       if value.to_sym == :local
         value = ENV['GEM_HOME'].gsub(/.*\//,"")
