@@ -12,7 +12,7 @@ module Capistrano
 
     set :rvm_shell do
       shell = File.join(rvm_bin_path, "rvm-shell")
-      ruby = rvm_ruby_string.to_s.strip
+      ruby = fetch(:rvm_ruby_string_evaluated).strip
       case ruby
       when "release_path"
         shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
@@ -83,11 +83,19 @@ module Capistrano
       end
     end
 
+    set :rvm_ruby_string_evaluated, do
+      value = fetch(:rvm_ruby_string, :default)
+      if value.to_sym == :local
+        value = ENV['GEM_HOME'].gsub(/.*\//,"")
+      end
+      value.to_s
+    end
+
     # Let users configure a path to export/import gemsets
     _cset(:rvm_gemset_path, "#{rvm_path}/gemsets")
 
     # Use the default ruby on the server, by default :)
-    _cset(:rvm_ruby_string, "default")
+    _cset(:rvm_ruby_string, :default)
 
     # Default sudo state
     _cset(:rvm_install_with_sudo, false)
@@ -189,7 +197,7 @@ module Capistrano
         set :rvm_install_shell, :zsh
       EOF
       rvm_task :install_ruby do
-        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
         else
@@ -221,7 +229,7 @@ module Capistrano
 
       desc "Create gemset"
       rvm_task :create_gemset do
-        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
         else
@@ -240,12 +248,12 @@ module Capistrano
         The gemset can be created with 'cap rvm:gemset_export'.
       EOF
       rvm_task :import_gemset do
-        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
         else
           if gemset
-            run "#{File.join(rvm_bin_path, "rvm-shell")} #{rvm_ruby_string} rvm gemset import #{File.join(rvm_gemset_path, "#{rvm_ruby_string}.gems")}", :shell => "#{rvm_install_shell}"
+            run "#{File.join(rvm_bin_path, "rvm-shell")} #{fetch(:rvm_ruby_string_evaluated)} rvm gemset import #{File.join(rvm_gemset_path, "#{fetch(:rvm_ruby_string_evaluated)}.gems")}", :shell => "#{rvm_install_shell}"
           end
         end
       end
@@ -259,24 +267,24 @@ module Capistrano
         The gemset can be imported with 'cap rvm:gemset_import'.
       EOF
       rvm_task :export_gemset do
-        ruby, gemset = rvm_ruby_string.to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
         else
           if gemset
-            run "#{File.join(rvm_bin_path, "rvm-shell")} #{rvm_ruby_string} rvm gemset export > #{File.join(rvm_gemset_path, "#{rvm_ruby_string}.gems")}", :shell => "#{rvm_install_shell}"
+            run "#{File.join(rvm_bin_path, "rvm-shell")} #{fetch(:rvm_ruby_string_evaluated)} rvm gemset export > #{File.join(rvm_gemset_path, "#{fetch(:rvm_ruby_string_evaluated)}.gems")}", :shell => "#{rvm_install_shell}"
           end
         end
       end
 
       desc "Install a gem, 'cap rvm:install_gem GEM=my_gem'."
       rvm_task :install_gem do
-        run "#{File.join(rvm_bin_path, "rvm")} #{rvm_ruby_string} do gem install #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
+        run "#{File.join(rvm_bin_path, "rvm")} #{fetch(:rvm_ruby_string_evaluated)} do gem install #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
       end
 
       desc "Uninstall a gem, 'cap rvm:uninstall_gem GEM=my_gem'."
       rvm_task :uninstall_gem do
-        run "#{File.join(rvm_bin_path, "rvm")} #{rvm_ruby_string} do gem uninstall --no-executables #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
+        run "#{File.join(rvm_bin_path, "rvm")} #{fetch(:rvm_ruby_string_evaluated)} do gem uninstall --no-executables #{ENV['GEM']}", :shell => "#{rvm_install_shell}"
       end
 
     end
