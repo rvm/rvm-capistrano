@@ -226,7 +226,7 @@ module Capistrano
           raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
         else
           if gemset
-            run with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}", :shell => "#{rvm_install_shell}")
+            run with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}"), :shell => "#{rvm_install_shell}"
           end
         end
       end
