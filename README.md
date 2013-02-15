@@ -29,7 +29,7 @@ The following code will:
 Example:
 
 ```ruby
-set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"")
+set :rvm_ruby_string, :local               # use the same ruby as used locally for deployment
 set :rvm_install_ruby_params, '--1.9'      # for jruby/rbx default to 1.9 mode
 set :rvm_install_pkgs, %w[libyaml openssl] # package list from https://rvm.io/packages
 set :rvm_install_ruby_params, '--with-opt-dir=/usr/local/rvm/usr' # package support
@@ -39,6 +39,19 @@ before 'deploy:setup', 'rvm:install_pkgs'  # install RVM packages before Ruby
 before 'deploy:setup', 'rvm:install_ruby'  # install Ruby and create gemset, or:
 before 'deploy:setup', 'rvm:create_gemset' # only create gemset
 before 'deploy:setup', 'rvm:import_gemset' # import gemset from file
+
+require "rvm/capistrano"
+```
+
+### RVM + Ruby on every deploy
+
+Update RVM and make sure Ruby is installed on every deploy:
+
+```ruby
+set :rvm_ruby_string, :local        # use the same ruby as used locally for deployment
+
+before 'deploy', 'rvm:install_rvm'  # update RVM
+before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
 
 require "rvm/capistrano"
 ```
@@ -115,6 +128,11 @@ end
 - `:rvm_install_ruby_params` - parameters for ruby, example `--patch railsexpress`
 - `:rvm_install_pkgs` - array of packages to install with `cap rvm:install_pkgs`
 - `:rvm_add_to_group` - user name to add to `rvm` group when RVM is installed with `:rvm_type` `:system`, by default it's the user name that runs deploy
+
+- `:rvm_require_role` - allows using RVM for only one role, useful when database is separated, it has to be defined before `require 'rvm/capistrano'`
+ - `:app` - use RVM only on servers defined for role `:app`
+ - `:rvm` - use RVM only on servers defined for role `:rvm` - where not all `:app` servers support RVM
+ - `<role>` - any other role that is defining servers supporting RVM
 
 ## Tasks
 
