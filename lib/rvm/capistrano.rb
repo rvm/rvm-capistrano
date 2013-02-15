@@ -26,7 +26,9 @@ module Capistrano
       shell
     end
     if fetch(:rvm_require_role,nil).nil?
-      _cset :default_shell, fetch(:rvm_shell)
+      _cset :default_shell do
+        fetch(:rvm_shell)
+      end
     else
       class << self
         def run(cmd, options={}, &block)
