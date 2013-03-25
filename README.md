@@ -145,6 +145,7 @@ cap rvm:install_ruby         # Install RVM ruby to the server, create gemset ...
 cap rvm:install_rvm          # Install RVM of the given choice to the server.
 cap rvm:install_pkgs         # Install RVM packages to the server.
 cap rvm:install_gem   GEM=my_gem  # Install gem {my_gem} on the server using selected ruby.
+                                  # Use `ENV['GEM'] = "bundler"` in script to specify gems.
 cap rvm:uninstall_gem GEM=my_gem  # Uninstall gem {my_gem} from the server selected ruby.
 ```
 
