@@ -4,4 +4,5 @@
 - Rakefile
 - LICENSE
 - lib/rvm/capistrano.rb
+- lib/rvm/extensions.rb
 - lib/rvm/capistrano/version.rb
