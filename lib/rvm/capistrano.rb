@@ -169,7 +169,12 @@ module Capistrano
         command_install  = case rvm_type
           when :root, :system
             if fetch(:use_sudo, true) == false && rvm_install_with_sudo == false
-              raise ":use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}. You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true"
+              raise "
+
+:use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}.
+You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true
+
+"
             else
               "#{sudo} "
             end
@@ -201,13 +206,43 @@ module Capistrano
       rvm_task :install_ruby do
         ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
-          raise "ruby can not be installed when using :rvm_ruby_string => :#{ruby}"
+          raise "
+
+ruby can not be installed when using :rvm_ruby_string => :#{ruby}
+
+"
         else
-          command_install = with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}")
+          command_install = ""
+
+          autolibs_flag = fetch(:rvm_autolibs_flag, 2).to_s
+          autolibs_flag_no_requirements = %w(
+            0 disable disabled
+            1 read    read-only
+            2 fail    read-fail
+          ).include?( autolibs_flag )
+
+          if autolibs_flag_no_requirements
+            command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} --autolibs=#{autolibs_flag} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}")
+          else
+            if fetch(:use_sudo, true) == false && rvm_install_with_sudo == false
+              raise "
+
+:use_sudo is set to 'false' but sudo is needed to install requirements with autolibs '#{autolibs_flag}'.
+You can enable use_sudo within rvm for use only by this ruby install operation by adding to deploy.rb: set :rvm_install_with_sudo, true
+
+"
+            else
+              command_install << "#{sudo} #{File.join(rvm_bin_path, "rvm")} --autolibs=#{autolibs_flag} requirements #{ruby}"
+              command_install << "; "
+              command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} --autolibs=1 #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}")
+            end
+          end
+
           if gemset
             command_install << "; "
             command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}")
           end
+
           run_silent_curl command_install
         end
       end
@@ -233,7 +268,11 @@ module Capistrano
       rvm_task :create_gemset do
         ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
         if %w( release_path default ).include? "#{ruby}"
-          raise "gemset can not be created when using :rvm_ruby_string => :#{ruby}"
+          raise "
+
+gemset can not be created when using :rvm_ruby_string => :#{ruby}
+
+"
         else
           if gemset
             run with_rvm_group("#{File.join(rvm_bin_path, "rvm")} #{ruby} do rvm gemset create #{gemset}"), :shell => "#{rvm_install_shell}"
