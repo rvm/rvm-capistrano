@@ -31,7 +31,7 @@ Example:
 ```ruby
 set :rvm_ruby_string, :local               # use the same ruby as used locally for deployment
 set :rvm_install_ruby_params, '--1.9'      # for jruby/rbx default to 1.9 mode
-set :rvm_install_pkgs, %w[libyaml openssl] # package list from https://rvm.io/packages
+set :rvm_autolibs_flag, "read-only"        # more info: rvm help autolibs
 set :rvm_install_ruby_params, '--with-opt-dir=/usr/local/rvm/usr' # package support
 
 before 'deploy:setup', 'rvm:install_rvm'   # install RVM
@@ -110,6 +110,12 @@ end
 - `:rvm_type` - how to detect rvm, default `:user`
  - `:user` - RVM installed in `$HOME`, user installation (default)
  - `:system` - RVM installed in `/usr/local`, multiuser installation
+
+- `:rvm_autolibs_flag` - control autolibs, read more `rvm help autolibs`
+ - `:disable` - fully disable autolibs, limit automated tasks
+ - `:read`    - autolibs only in read only mode, do not change anything in system
+ - `:fail`    - autolibs only in read only mode, fail if changes are required
+ - `:enable`  - let RVM install what is needed for ruby, required `set :use_sudo, true`
 
 - `:rvm_path` - force `$rvm_path`, only overwrite if standard paths can not be used
 - `:rvm_bin_path` - force `$rvm_bin_path`, only overwrite if standard paths can not be used
