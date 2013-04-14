@@ -4,6 +4,10 @@
 
 RVM / Capistrano Integration Gem
 
+## Compatibility
+
+`rvm-capistrano` `1.3.0` with Autolibs requires at lease RVM `1.19.0`.
+
 ## Installation
 
 RVM / Capistrano integration is available as a separate gem
