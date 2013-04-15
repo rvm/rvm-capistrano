@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.platform    = Gem::Platform::RUBY
   spec.authors     = ['Wayne E. Seguin', 'Michal Papis']
   spec.email       = ['wayneeseguin@gmail.com','mpapis@gmail.com']
-  spec.homepage    = 'https://rvm.beginrescueend.com/integration/capistrano'
+  spec.homepage    = 'https://rvm.io/integration/capistrano/'
   spec.summary     =
   spec.description = 'RVM / Capistrano Integration Gem'
   spec.license     = 'MIT'
