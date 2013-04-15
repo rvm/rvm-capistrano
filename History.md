@@ -1,6 +1,19 @@
 ### 1.3.0 / 2013-04-12
 
-To be completed
+* Silence curl progress when fetching libyaml, Ruby, etc. during rvm:install_ruby, closes #33
+* Fix concurrency issue when running on shared home directory, merge #39
+* Add support for rvm pkg install, gemset import/export, closes #40
+* Make sure deploying user is added to rvm group, fix #43
+* Fix retun status of silent curl, fix #37
+* Allow restricting rvm tasks to given roles, closes #42
+* Fix rvm_install_ruby_threads when there is no /proc/cpuinfo, fix #46
+* Default :rvm_install_pkgs to [], fix #44
+* Improved checking if capistrano was loaded, fix #30
+* Fix parameters ordering for creating gemsets, fix #49
+* Allow setting :local ruby string to read version/gemset from GEM_HOME, fix #50
+* Defer setting rvm_shell and default_shell, fix #51
+* Improved error messages
+* Improved documentation
 
 ### 1.2.7 / 2012-09-09
 
