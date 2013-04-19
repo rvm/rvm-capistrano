@@ -115,7 +115,8 @@ end
  - `:disable` - fully disable autolibs, limit automated tasks
  - `:read`    - autolibs only in read only mode, do not change anything in system
  - `:fail`    - autolibs only in read only mode, fail if changes are required
- - `:enable`  - let RVM install what is needed for ruby, required `set :use_sudo, true`
+ - `:package` - let RVM install what is needed for ruby, required `set :use_sudo, true` or `set :rvm_install_with_sudo, true`
+ - `:enable`  - all behaviors from `:package`, plus installing a package manager in OSX
 
 - `:rvm_path` - force `$rvm_path`, only overwrite if standard paths can not be used
 - `:rvm_bin_path` - force `$rvm_bin_path`, only overwrite if standard paths can not be used
