@@ -216,9 +216,11 @@ ruby can not be installed when using :rvm_ruby_string => :#{ruby}
 
           autolibs_flag = fetch(:rvm_autolibs_flag, 2).to_s
           autolibs_flag_no_requirements = %w(
-            0 disable disabled
-            1 read    read-only
-            2 fail    read-fail
+            0 disable  disabled
+            1 read     read-only
+            2 fail     read-fail
+            3 packages install-packages
+            4 enable   enabled
           ).include?( autolibs_flag )
 
           if autolibs_flag_no_requirements
