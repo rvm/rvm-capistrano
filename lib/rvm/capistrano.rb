@@ -140,7 +140,7 @@ module Capistrano
       def with_rvm_group(command)
         case rvm_type
         when :root, :system
-          "sg rvm -c \"#{command}\""
+          "#{sudo} sg rvm -c \"#{command}\""
         else
           command
         end
