@@ -1,3 +1,8 @@
+### 1.3.1 / 2013-06-10
+
+* prefix sg with sudo, fix #69
+* documentation / spelling fixes
+
 ### 1.3.0 / 2013-04-12
 
 * Silence curl progress when fetching libyaml, Ruby, etc. during rvm:install_ruby, closes #33
