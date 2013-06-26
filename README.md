@@ -33,14 +33,23 @@ The following code will:
 Example:
 
 ```ruby
-set :rvm_ruby_string, :local               # use the same ruby as used locally for deployment
-set :rvm_autolibs_flag, "read-only"        # more info: rvm help autolibs
+set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
+set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
 
-before 'deploy:setup', 'rvm:install_rvm'   # install RVM
-before 'deploy:setup', 'rvm:install_ruby'  # install Ruby and create gemset, OR:
-before 'deploy:setup', 'rvm:create_gemset' # only create gemset
+before 'deploy:setup', 'rvm:install_rvm'  # install RVM
+before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset, OR:
+# before 'deploy:setup', 'rvm:create_gemset' # only create gemset
 
 require "rvm/capistrano"
+```
+
+### Disabling `bundle --deployment` when using gemsets
+
+Using gemsets is safer from `bundle --deployment` which is default, to disable it use:
+
+```ruby
+set :bundle_dir, ''
+set :bundle_flags, '--system --quiet'
 ```
 
 ### RVM + Ruby on every deploy
