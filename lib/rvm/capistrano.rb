@@ -10,6 +10,12 @@ module Capistrano
       end
     end
 
+    class << self
+      def quote_and_escape(text, quote = "'")
+        "#{quote}#{text.gsub(/#{quote}/) { |m| "#{quote}\\#{quote}#{quote}" }}#{quote}"
+      end
+    end
+
     _cset :rvm_shell do
       shell = File.join(rvm_bin_path, "rvm-shell")
       ruby = fetch(:rvm_ruby_string_evaluated).strip
@@ -49,7 +55,7 @@ module Capistrano
           if shell == false
             cmd
           else
-            "#{shell || "sh"} -c '#{cmd.gsub(/'/) { |m| "'\\''" }}'"
+            "#{shell || "sh"} -c #{quote_and_escape(cmd)}"
           end
         end
       end
@@ -137,16 +143,31 @@ module Capistrano
         EOF
       end
 
-      def rvm_if_sudo
+      def rvm_if_sudo(options = {})
         case rvm_type
         when :root, :system
           if fetch(:use_sudo, true) == false && rvm_install_with_sudo == false
-            raise "
+            explanation = <<-EXPLANATION
+You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb:
+
+    set :rvm_install_with_sudo, true
+
+            EXPLANATION
+            if options[:deferred]
+              <<-DEFERRED_ERROR.gsub(/\n/, " ; ")
+echo "
+Neither :use_sudo or :rvm_install_with_sudo was set and installation would ended up in using 'sudo'
+#{explanation}
+" >&2
+exit 1
+              DEFERRED_ERROR
+            else
+              raise "
 
 :use_sudo is set to 'false' but sudo is needed to install rvm_type: #{rvm_type}.
-You can enable use_sudo within rvm for use only by this install operation by adding to deploy.rb: set :rvm_install_with_sudo, true
-
+#{explanation}
 "
+            end
           else
             "#{sudo} "
           end
@@ -158,7 +179,12 @@ You can enable use_sudo within rvm for use only by this install operation by add
       def with_rvm_group(command)
         case rvm_type
         when :root, :system
-          "#{rvm_if_sudo} sg rvm -c \"#{command}\""
+          <<-CODE.gsub(/\n/, " ; ")
+if id | grep ' groups=.*(rvm)' >/dev/null
+then #{command}
+else #{rvm_if_sudo(:deferred=>true)} sg rvm -c #{quote_and_escape(command)}
+fi
+          CODE
         else
           command
         end
