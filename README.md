@@ -33,14 +33,14 @@ The following code will:
 Example:
 
 ```ruby
+require "rvm/capistrano"
+
 set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
 set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
 
 before 'deploy:setup', 'rvm:install_rvm'  # install RVM
 before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset, OR:
 # before 'deploy:setup', 'rvm:create_gemset' # only create gemset
-
-require "rvm/capistrano"
 ```
 
 ### Disabling `bundle --deployment` when using gemsets
@@ -57,12 +57,12 @@ set :bundle_flags, '--system --quiet'
 Update RVM and make sure Ruby is installed on every deploy:
 
 ```ruby
+require "rvm/capistrano"
+
 set :rvm_ruby_string, :local        # use the same ruby as used locally for deployment
 
 before 'deploy', 'rvm:install_rvm'  # update RVM
 before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
-
-require "rvm/capistrano"
 ```
 
 ### To use the ruby version currently active locally
@@ -80,7 +80,7 @@ set :rvm_require_role, :app
 require "rvm/capistrano"
 ```
 
-The order is important `:rvm_require_role` has to be `set` before `require "rvm/capistrano"`.
+It is important to `set :rvm_require_role` before `require "rvm/capistrano"`.
 
 ### To restrict rvm to only some servers
 
@@ -139,7 +139,7 @@ end
 
 - `:rvm_install_shell` - shell to be used for `rvm` operations, by default `bash`, most likely you do not need to change it
 - `:rvm_install_ruby` - a command used to install ruby, by default `install`, most likely you do not need to change it
-- `:rvm_install_ruby_threads` - number of threads to use for ruby compilation, by default it's number of CPU cores on Linux
+- `:rvm_install_ruby_threads` - number of threads to use for ruby compilation, rvm by default uses all CPU cores
 - `:rvm_install_ruby_params` - parameters for ruby, example `--patch railsexpress`
 - `:rvm_install_pkgs` - array of packages to install with `cap rvm:install_pkgs`
 - `:rvm_add_to_group` - user name to add to `rvm` group when RVM is installed with `:rvm_type` `:system`, by default it's the user name that runs deploy

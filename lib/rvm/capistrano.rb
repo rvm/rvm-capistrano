@@ -3,10 +3,12 @@
 module Capistrano
   Configuration.instance(true).load do
 
-    # Taken from the capistrano code.
-    def _cset(name, *args, &block)
-      unless exists?(name)
-        set(name, *args, &block)
+    unless methods.map(&:to_sym).include?(:_cset)
+      # Taken from the capistrano code.
+      def _cset(name, *args, &block)
+        unless exists?(name)
+          set(name, *args, &block)
+        end
       end
     end
 
@@ -16,26 +18,9 @@ module Capistrano
       end
     end
 
-    _cset :rvm_shell do
-      shell = File.join(rvm_bin_path, "rvm-shell")
-      ruby = fetch(:rvm_ruby_string_evaluated).strip
-      case ruby
-      when "release_path"
-        shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
-      when "local"
-        ruby = (ENV['GEM_HOME'] || "").gsub(/.*\//, "")
-        raise "Failed to get ruby version from GEM_HOME. Please make sure rvm is loaded!" if ruby.empty?
-        shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'"
-      else
-        shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
-      end
-      shell
-    end
-    if fetch(:rvm_require_role,nil).nil?
-      _cset :default_shell do
-        fetch(:rvm_shell)
-      end
-    else
+    # this is part of check, search for :rvm_require_role
+    unless fetch(:rvm_require_role,nil).nil?
+      set :rvm_require_role_was_set_before_require, true
       class << self
         def run(cmd, options={}, &block)
           if options[:eof].nil? && !cmd.include?(sudo)
@@ -61,74 +46,105 @@ module Capistrano
       end
     end
 
-    # Let users set the type of their rvm install.
-    _cset(:rvm_type, :user)
-
-    # Define rvm_path
-    # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
-    # rvm to boostrap using the proper path.  This is being lost in Capistrano due to the lack of a
-    # full environment.
-    _cset(:rvm_path) do
-      case rvm_type
-      when :root, :system
-        "/usr/local/rvm"
-      when :local, :user, :default
-        "$HOME/.rvm/"
-      else
-        rvm_type.to_s.empty? ?  "$HOME/.rvm" : rvm_type.to_s
+    on :load do
+      _cset :rvm_shell do
+        shell = File.join(rvm_bin_path, "rvm-shell")
+        ruby = fetch(:rvm_ruby_string_evaluated).strip
+        case ruby
+        when "release_path"
+          shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
+        when "local"
+          ruby = (ENV['GEM_HOME'] || "").gsub(/.*\//, "")
+          raise "Failed to get ruby version from GEM_HOME. Please make sure rvm is loaded!" if ruby.empty?
+          shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'"
+        else
+          shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
+        end
+        shell
       end
-    end
 
-    # Let users override the rvm_bin_path
-    _cset(:rvm_bin_path) do
-      case rvm_type
-      when :root, :system
-        "/usr/local/rvm/bin"
-      when :local, :user, :default
-        "$HOME/.rvm/bin"
-      else
-        rvm_type.to_s.empty? ?  "#{rvm_path}/bin" : rvm_type.to_s
+      # this is part of check, search for :rvm_require_role
+      if fetch(:rvm_require_role,nil).nil?
+        set :default_shell do
+          fetch(:rvm_shell)
+        end
+      elsif fetch(:rvm_require_role_was_set_before_require, nil).nil?
+        raise "
+
+ERROR: detected 'set :rvm_require_role, \"#{fetch(:rvm_require_role,nil)}\"' after 'require \"rvm/capistrano\"', please move it above for proper functioning.
+
+"
       end
-    end
 
-    set :rvm_ruby_string_evaluated do
-      value = fetch(:rvm_ruby_string, :default)
-      if value.to_sym == :local
-        value = ENV['GEM_HOME'].gsub(/.*\//,"")
+      # Let users set the type of their rvm install.
+      _cset(:rvm_type, :user)
+
+      # Define rvm_path
+      # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
+      # rvm to boostrap using the proper path.  This is being lost in Capistrano due to the lack of a
+      # full environment.
+      _cset(:rvm_path) do
+        case rvm_type
+        when :root, :system
+          "/usr/local/rvm"
+        when :local, :user, :default
+          "$HOME/.rvm/"
+        else
+          rvm_type.to_s.empty? ?  "$HOME/.rvm" : rvm_type.to_s
+        end
       end
-      value.to_s
+
+      # Let users override the rvm_bin_path
+      _cset(:rvm_bin_path) do
+        case rvm_type
+        when :root, :system
+          "/usr/local/rvm/bin"
+        when :local, :user, :default
+          "$HOME/.rvm/bin"
+        else
+          rvm_type.to_s.empty? ?  "#{rvm_path}/bin" : rvm_type.to_s
+        end
+      end
+
+      set :rvm_ruby_string_evaluated do
+        value = fetch(:rvm_ruby_string, :default)
+        if value.to_sym == :local
+          value = ENV['GEM_HOME'].gsub(/.*\//,"")
+        end
+        value.to_s
+      end
+
+      # Let users configure a path to export/import gemsets
+      _cset(:rvm_gemset_path, "#{rvm_path}/gemsets")
+
+      # Use the default ruby on the server, by default :)
+      _cset(:rvm_ruby_string, :default)
+
+      # Default sudo state
+      _cset(:rvm_install_with_sudo, false)
+
+      # Let users set the install type and shell of their choice.
+      _cset(:rvm_install_type, :stable)
+      _cset(:rvm_install_shell, :bash)
+
+      # Let users set the (re)install for ruby.
+      _cset(:rvm_install_ruby, :install)
+
+      # Pass no special params to the ruby build by default
+      _cset(:rvm_install_ruby_params, '')
+
+      # Additional rvm packages to install.
+      _cset(:rvm_install_pkgs, [])
+
+      # By default system installations add deploying user to rvm group. also try :all
+      _cset(:rvm_add_to_group, fetch(:user,"$USER"))
+
     end
-
-    # Let users configure a path to export/import gemsets
-    _cset(:rvm_gemset_path, "#{rvm_path}/gemsets")
-
-    # Use the default ruby on the server, by default :)
-    _cset(:rvm_ruby_string, :default)
-
-    # Default sudo state
-    _cset(:rvm_install_with_sudo, false)
-
-    # Let users set the install type and shell of their choice.
-    _cset(:rvm_install_type, :stable)
-    _cset(:rvm_install_shell, :bash)
-
-    # Let users set the (re)install for ruby.
-    _cset(:rvm_install_ruby, :install)
-    _cset(:rvm_install_ruby_threads, "$(cat /proc/cpuinfo 2>/dev/null | (grep vendor_id || echo 'vendor_id : Other';) | wc -l)")
-
-    # Pass no special params to the ruby build by default
-    _cset(:rvm_install_ruby_params, '')
-
-    # Additional rvm packages to install.
-    _cset(:rvm_install_pkgs, [])
-
-    # By default system installations add deploying user to rvm group. also try :all
-    _cset(:rvm_add_to_group, fetch(:user,"$USER"))
 
     namespace :rvm do
 
       def run_silent_curl(command)
-        run <<-EOF.gsub(/[\s\n]+/, ' '), :shell => "#{rvm_install_shell}"
+        run(<<-EOF.gsub(/[\s]+/, ' '), :shell => "#{rvm_install_shell}")
           __LAST_STATUS=0;
           export CURL_HOME="${TMPDIR:-${HOME}}/.rvm-curl-config.$$";
           mkdir ${CURL_HOME}/;
@@ -227,14 +243,14 @@ fi
 
         By default ruby is compiled using all CPU cores, change with:
 
-        set :rvm_install_ruby_threads, :reinstall
+        set :rvm_install_ruby_threads, 5
 
         By default BASH is used for installer, change with:
 
         set :rvm_install_shell, :zsh
       EOF
       rvm_task :install_ruby do
-        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split(/@/)
         if %w( release_path default ).include? "#{ruby}"
           raise "
 
@@ -251,12 +267,14 @@ ruby can not be installed when using :rvm_ruby_string => :#{ruby}
             2 fail    read-fail
           ).include?( autolibs_flag )
 
+          install_ruby_threads = fetch(:rvm_install_ruby_threads,nil).nil? ? '' : "-j #{rvm_install_ruby_threads}"
+
           if autolibs_flag_no_requirements
-            command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} --autolibs=#{autolibs_flag} #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}")
+            command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} --autolibs=#{autolibs_flag} #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}")
           else
             command_install << "#{rvm_if_sudo} #{File.join(rvm_bin_path, "rvm")} --autolibs=#{autolibs_flag} requirements #{ruby}"
             command_install << "; "
-            command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} --autolibs=1 #{rvm_install_ruby} #{ruby} -j #{rvm_install_ruby_threads} #{rvm_install_ruby_params}")
+            command_install << with_rvm_group("#{File.join(rvm_bin_path, "rvm")} --autolibs=1 #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}")
           end
 
           if gemset
@@ -287,7 +305,7 @@ ruby can not be installed when using :rvm_ruby_string => :#{ruby}
 
       desc "Create gemset"
       rvm_task :create_gemset do
-        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split(/@/)
         if %w( release_path default ).include? "#{ruby}"
           raise "
 
@@ -310,7 +328,7 @@ gemset can not be created when using :rvm_ruby_string => :#{ruby}
         The gemset can be created with 'cap rvm:gemset_export'.
       EOF
       rvm_task :import_gemset do
-        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split(/@/)
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
         else
@@ -329,7 +347,7 @@ gemset can not be created when using :rvm_ruby_string => :#{ruby}
         The gemset can be imported with 'cap rvm:gemset_import'.
       EOF
       rvm_task :export_gemset do
-        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split /@/
+        ruby, gemset = fetch(:rvm_ruby_string_evaluated).to_s.strip.split(/@/)
         if %w( release_path default ).include? "#{ruby}"
           raise "gemset can not be imported when using :rvm_ruby_string => :#{ruby}"
         else
