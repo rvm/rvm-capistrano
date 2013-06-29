@@ -4,5 +4,6 @@
 - Rakefile
 - LICENSE
 - lib/rvm/capistrano.rb
+- lib/rvm/extensions.rb
 - lib/rvm/capistrano/version.rb
 - lib/rvm/capistrano/selector.rb
