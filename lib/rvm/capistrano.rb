@@ -1,5 +1,7 @@
 # Recipes for using RVM on a server with capistrano.
 
+require 'rvm/capistrano/selector'
+
 module Capistrano
   Configuration.instance(true).load do
 
@@ -47,28 +49,9 @@ module Capistrano
     end
 
     on :load do
-      _cset :rvm_shell do
-        shell = File.join(rvm_bin_path, "rvm-shell")
-        ruby = fetch(:rvm_ruby_string_evaluated).strip
-        case ruby
-        when "release_path"
-          shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
-        when "local"
-          ruby = (ENV['GEM_HOME'] || "").gsub(/.*\//, "")
-          raise "Failed to get ruby version from GEM_HOME. Please make sure rvm is loaded!" if ruby.empty?
-          shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'"
-        else
-          shell = "rvm_path=#{rvm_path} #{shell} '#{ruby}'" unless ruby.empty?
-        end
-        shell
-      end
 
       # this is part of check, search for :rvm_require_role
-      if fetch(:rvm_require_role,nil).nil?
-        set :default_shell do
-          fetch(:rvm_shell)
-        end
-      elsif fetch(:rvm_require_role_was_set_before_require, nil).nil?
+      if ! fetch(:rvm_require_role,nil).nil? and fetch(:rvm_require_role_was_set_before_require, nil).nil?
         raise "
 
 ERROR: detected 'set :rvm_require_role, \"#{fetch(:rvm_require_role,nil)}\"' after 'require \"rvm/capistrano\"', please move it above for proper functioning.
@@ -76,49 +59,8 @@ ERROR: detected 'set :rvm_require_role, \"#{fetch(:rvm_require_role,nil)}\"' aft
 "
       end
 
-      # Let users set the type of their rvm install.
-      _cset(:rvm_type, :user)
-
-      # Define rvm_path
-      # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
-      # rvm to boostrap using the proper path.  This is being lost in Capistrano due to the lack of a
-      # full environment.
-      _cset(:rvm_path) do
-        case rvm_type
-        when :root, :system
-          "/usr/local/rvm"
-        when :local, :user, :default
-          "$HOME/.rvm/"
-        else
-          rvm_type.to_s.empty? ?  "$HOME/.rvm" : rvm_type.to_s
-        end
-      end
-
-      # Let users override the rvm_bin_path
-      _cset(:rvm_bin_path) do
-        case rvm_type
-        when :root, :system
-          "/usr/local/rvm/bin"
-        when :local, :user, :default
-          "$HOME/.rvm/bin"
-        else
-          rvm_type.to_s.empty? ?  "#{rvm_path}/bin" : rvm_type.to_s
-        end
-      end
-
-      set :rvm_ruby_string_evaluated do
-        value = fetch(:rvm_ruby_string, :default)
-        if value.to_sym == :local
-          value = ENV['GEM_HOME'].gsub(/.*\//,"")
-        end
-        value.to_s
-      end
-
       # Let users configure a path to export/import gemsets
       _cset(:rvm_gemset_path, "#{rvm_path}/gemsets")
-
-      # Use the default ruby on the server, by default :)
-      _cset(:rvm_ruby_string, :default)
 
       # Default sudo state
       _cset(:rvm_install_with_sudo, false)
