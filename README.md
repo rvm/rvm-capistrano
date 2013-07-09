@@ -23,6 +23,28 @@ $ echo "gem 'rvm-capistrano'" >> Gemfile
 $ bundle install
 ```
 
+## Modules
+
+Since version `1.4.0` `rvm-capistrano` is divided into separate
+modules which allow selecting which parts of it should be included.
+
+`rvm/capistrano`:
+
+- `base`     - minimal code, does not change behaviors, only provides definitions like `:rvm_shell`
+- `selector` - extends `base` to automatically `set :default_shell`
+- `selector_mixed` - alternative version of `selector` allowing to select which servers should be RVM aware
+- `install_rvm`    - adds task `rvm:install_rvm`
+- `install_ruby`   - adds task `rvm:install_ruby`
+- `create_gemset`  - adds task `rvm:create_gemset`
+- `empty_gemset`   - adds task `rvm:empty_gemset`
+- `install_pkgs`   - adds task `rvm:install_pkgs` - **deprecated** (you should try `autolibs` first)
+- `gem_install_uninstall` - adds tasks `rvm:install_gem`   / `rvm:uninstall_gem`
+- `gemset_import_export`  - adds tasks `rvm:import_gemset` / `rvm:export_gemset`
+
+By default `rvm/capistrano` loads: `selector`, `install_rvm`, `install_ruby`, `create_gemset`.
+
+Warning: `selector` and `selector_mixed` are to be used separately they can not be used both at the same time.
+
 ## Example
 
 The following code will:
@@ -77,16 +99,16 @@ Warning, when using `:rvm_require_role` `parallel` is used to select shell per s
 
 ```ruby
 set :rvm_require_role, :app
-require "rvm/capistrano"
+require "rvm/capistrano/selector_mixed"
 ```
 
-It is important to `set :rvm_require_role` before `require "rvm/capistrano"`.
+It is important to `set :rvm_require_role` before `require "rvm/capistrano/selector_mixed"`.
 
 ### To restrict rvm to only some servers
 
 ```ruby
 set :rvm_require_role, :rvm
-require "rvm/capistrano"
+require "rvm/capistrano/selector_mixed"
 role :rvm, "web1", "web2"
 role :app, "web1", "web2", "web3"
 ```
@@ -94,7 +116,7 @@ role :app, "web1", "web2", "web3"
 ### To control rvm shell manually
 
 ```ruby
-require "rvm/capistrano"
+require "rvm/capistrano/base"
 set :default_shell, :bash
 task :example do
   run "echo 'in rvm'", :shell => fetch(:rvm_shell)
