@@ -1,4 +1,13 @@
 module Capistrano
+  class Configuration
+    def deffered_load(&block)
+      if current_task
+        instance_eval(&block)
+      else
+        on(:load, &block)
+      end
+    end
+  end
 end
 
 def rvm_with_capistrano(&block)

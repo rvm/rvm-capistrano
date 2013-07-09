@@ -4,7 +4,7 @@ rvm_with_capistrano do
 
   warn "task 'rvm:install_pkgs' is deprecated, please read about autolibs => http://rvm.io/rvm/autolibs especially check the autolibs mode 'rvm_pkg'."
 
-  on :load do
+  deffered_load do
 
     # Additional rvm packages to install.
     _cset(:rvm_install_pkgs, [])
