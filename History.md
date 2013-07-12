@@ -1,3 +1,27 @@
+### 1.4.1 / 2013-07-13
+
+* add tasks to create aliase and wrappers, closes #77
+
+### 1.4.0 / 2013-07-09
+
+* fix configuration deffering for requiring rvm/capistrano from a task, fix #76
+* merge empty_gemset, merge #60
+* extact extensions, update #60
+
+### 1.3.4 / 2013-06-28
+
+* fix semicolons in with_rvm_group, fix #73
+* allow setting variables after reqired, fix parenthises warings, remove old rvm_install_ruby_threads
+
+### 1.3.3 / 2013-06-26
+
+* mention how to disble bundle --deploymnt, closes #72
+* use sg only if needed and deferr sudo check for itto console, fix #71
+
+### 1.3.2 / 2013-06-24
+
+* extract sudo handling code into single function, fix #71
+
 ### 1.3.1 / 2013-06-10
 
 * prefix sg with sudo, fix #69
