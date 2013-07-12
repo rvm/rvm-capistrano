@@ -40,6 +40,7 @@ modules which allow selecting which parts of it should be included.
 - `install_pkgs`   - adds task `rvm:install_pkgs` - **deprecated** (you should try `autolibs` first)
 - `gem_install_uninstall` - adds tasks `rvm:install_gem`   / `rvm:uninstall_gem`
 - `gemset_import_export`  - adds tasks `rvm:import_gemset` / `rvm:export_gemset`
+- `alias_and_wrapp`       - adds tasks `rvm:create_alias`  / `rvm:create_wrappers` / `rvm:show_alias_path`
 
 By default `rvm/capistrano` loads: `selector`, `install_rvm`, `install_ruby`, `create_gemset`.
 
@@ -86,6 +87,37 @@ set :rvm_ruby_string, :local        # use the same ruby as used locally for depl
 before 'deploy', 'rvm:install_rvm'  # update RVM
 before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
 ```
+
+### Create application alias and wrappers
+
+For server scripts and configuration the easiest is to use wrappers from aliased path.
+
+```ruby
+require "rvm/capistrano/alias_and_wrapp"
+before 'deploy', 'rvm:create_alias'
+before 'deploy', 'rvm:create_wrappers'
+```
+To see the path to be used in scripts use:
+```bash
+cap rvm:show_alias_path
+```
+It will show either that the path does not exist yet:
+```ruby
+*** [err :: niczsoft.com] ls: cannot access /home/ad/.rvm//wrappers/ad/*: No such file or directory
+```
+or in case it exist it will list all available wrappers:
+```
+...
+ ** [out :: niczsoft.com] /home/ad/.rvm//wrappers/ad/ruby
+...
+```
+This will to use clean scripts where proper rvm settings are automatically loaded
+from the aliased wrappers. For example configuring
+[PassengerRuby](http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerRuby)
+with `/home/ad/.rvm//wrappers/ad/ruby`, this way there is no need for changing scripts
+when the application ruby changes. In the seem spirit you can use wrapper for `bundle`
+in **cron** or **init.d** scripts with `/home/ad/.rvm//wrappers/ad/bundle exec [command]` -
+it will automatically load proper configuration for the application, no need for any tricks.
 
 ### To use the ruby version currently active locally
 
@@ -184,6 +216,9 @@ cap rvm:install_pkgs         # Install RVM packages to the server.
 cap rvm:install_gem   GEM=my_gem  # Install gem {my_gem} on the server using selected ruby.
                                   # Use `ENV['GEM'] = "bundler"` in script to specify gems.
 cap rvm:uninstall_gem GEM=my_gem  # Uninstall gem {my_gem} from the server selected ruby.
+cap rvm:create_alias         # create #{application} alias
+cap rvm:create_wrappers      # create wrappers for gem executables
+cap rvm:show_alias_path      # show path to aliased path with wrappers
 ```
 
 ## Development

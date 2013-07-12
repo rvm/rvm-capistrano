@@ -4,6 +4,7 @@
 - Rakefile
 - LICENSE
 - lib/rvm/capistrano.rb
+- lib/rvm/capistrano/alias_and_wrapp.rb
 - lib/rvm/capistrano/base.rb
 - lib/rvm/capistrano/create_gemset.rb
 - lib/rvm/capistrano/empty_gemset.rb
