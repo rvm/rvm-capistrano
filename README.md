@@ -111,7 +111,7 @@ or in case it exist it will list all available wrappers:
  ** [out :: niczsoft.com] /home/ad/.rvm//wrappers/ad/ruby
 ...
 ```
-This will to use clean scripts where proper rvm settings are automatically loaded
+This will allow to use clean scripts where proper RVM settings are automatically loaded
 from the aliased wrappers. For example configuring
 [PassengerRuby](http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerRuby)
 with `/home/ad/.rvm//wrappers/ad/ruby`, this way there is no need for changing scripts

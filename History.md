@@ -1,6 +1,6 @@
 ### 1.4.1 / 2013-07-13
 
-* add tasks to create aliase and wrappers, closes #77
+* add tasks to create aliases and wrappers, closes #77
 
 ### 1.4.0 / 2013-07-09
 
