@@ -29,13 +29,5 @@ ERROR: no 'set :rvm_require_role, \"...\"' declared before 'rvm/capistrano/selec
       end
     end
 
-    def command_with_shell(cmd, shell=nil)
-      if shell == false
-        cmd
-      else
-        "#{shell || "sh"} -c #{quote_and_escape(cmd)}"
-      end
-    end
-
   end
 end

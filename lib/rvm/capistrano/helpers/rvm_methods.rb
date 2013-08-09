@@ -36,5 +36,13 @@ module Capistrano
       result << " #{options[:with_ruby]} do" if options[:with_ruby]
       result
     end
+
+    def command_with_shell(cmd, shell=nil)
+      if shell == false
+        cmd
+      else
+        "#{shell || "sh"} -c #{quote_and_escape(cmd)}"
+      end
+    end
   end
 end
