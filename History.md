@@ -1,3 +1,7 @@
+### 1.4.3 / 2013-08-09
+
+* move command_with_shell to common code, fix #82
+
 ### 1.4.2 / 2013-08-09
 
 * require newer capistrano - fix issue with rails 4, merge #81
