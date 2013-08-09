@@ -1,3 +1,7 @@
+### 1.4.2 / 2013-08-09
+
+* require newer capistrano - fix issue with rails 4, merge #81
+
 ### 1.4.1 / 2013-07-13
 
 * add tasks to create aliases and wrappers, closes #77
