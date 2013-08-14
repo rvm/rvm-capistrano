@@ -1,6 +1,6 @@
 module Capistrano
   class Configuration
-    def deffered_load(&block)
+    def deferred_load(&block)
       if current_task
         instance_eval(&block)
       else

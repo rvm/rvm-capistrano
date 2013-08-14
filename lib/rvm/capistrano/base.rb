@@ -3,7 +3,7 @@ require 'rvm/capistrano/helpers/rvm_methods'
 
 rvm_with_capistrano do
 
-  deffered_load do
+  deferred_load do
     _cset :rvm_shell do
       shell = File.join(rvm_bin_path, "rvm-shell")
       ruby = fetch(:rvm_ruby_string_evaluated).strip
@@ -66,7 +66,7 @@ rvm_with_capistrano do
 
 ## not needed in base but are used in many extensions
 
-  deffered_load do
+  deferred_load do
     # Let users set the install shell of their choice
     _cset(:rvm_install_shell, :bash)
   end

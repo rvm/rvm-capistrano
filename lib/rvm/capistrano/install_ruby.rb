@@ -5,7 +5,7 @@ require 'rvm/capistrano/helpers/with_rvm_group'
 
 rvm_with_capistrano do
 
-  deffered_load do
+  deferred_load do
 
     # Let users set the (re)install for ruby.
     _cset(:rvm_install_ruby, :install)

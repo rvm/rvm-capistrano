@@ -23,11 +23,9 @@ module Capistrano
     # - use :with_rvm_group => true - to wrap it all in `with_rvm_group(...)` call
     # - use :with_ruby => 'with_ruby' - to extend to `.../bin/rvm #{with_ruby} do`
     def run_rvm(command, options={})
-      if options[:with_rvm_group]
-        run_without_rvm("#{path_to_bin_rvm(options)} #{command}")
-      else
-        run_without_rvm(with_rvm_group("#{path_to_bin_rvm(options)} #{command}"))
-      end
+      cmd = "#{path_to_bin_rvm(options)} #{command}"
+      cmd = with_rvm_group(cmd) if options[:with_rvm_group]
+      run_without_rvm(cmd)
     end
 
     # helper to find path to rvm binary

@@ -173,6 +173,7 @@ end
 - `:rvm_type` - how to detect rvm, default `:user`
  - `:user` - RVM installed in `$HOME`, user installation (default)
  - `:system` - RVM installed in `/usr/local`, multiuser installation
+ - (some other values permitted for backwards compatability only)
 
 - `:rvm_autolibs_flag` - control autolibs, read more `rvm help autolibs`
  - `:disable` - fully disable autolibs, limit automated tasks
