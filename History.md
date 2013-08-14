@@ -1,3 +1,7 @@
+### 1.4.4 / 2013-08-14
+
+* cleaning, merge #83
+
 ### 1.4.3 / 2013-08-09
 
 * move command_with_shell to common code, fix #82
