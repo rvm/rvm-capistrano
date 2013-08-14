@@ -2,7 +2,7 @@ require 'rvm/capistrano/base'
 
 rvm_with_capistrano do
 
-  deffered_load do
+  deferred_load do
     # Default sudo state
     _cset(:rvm_install_with_sudo, false)
   end

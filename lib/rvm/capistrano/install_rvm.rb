@@ -4,7 +4,7 @@ require 'rvm/capistrano/helpers/rvm_if_sudo'
 
 rvm_with_capistrano do
 
-  deffered_load do
+  deferred_load do
 
     # Let users set the install type of their choice.
     _cset(:rvm_install_type, :stable)

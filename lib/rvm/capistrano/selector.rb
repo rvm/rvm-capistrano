@@ -1,7 +1,7 @@
 require 'rvm/capistrano/base'
 
 rvm_with_capistrano do
-  deffered_load do
+  deferred_load do
 
     # conflicts with rvm/capistrano/selector_mixed
     unless fetch(:rvm_require_role,nil).nil?
