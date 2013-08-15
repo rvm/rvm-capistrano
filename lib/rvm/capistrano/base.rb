@@ -44,6 +44,15 @@ rvm_with_capistrano do
     # Let users override the rvm_bin_path
     _cset(:rvm_bin_path) { "#{rvm_path}/bin" }
 
+    # Let users configure a path to export/import gemsets
+    _cset(:rvm_gemset_path) do
+      case rvm_type
+      when :root, :system, :local, :user, :default
+        rvm_path
+      else
+        rvm_path
+      end + "/gemsets"
+    end
     # evaluate :rvm_ruby_string => :local
     set :rvm_ruby_string_evaluated do
       value = fetch(:rvm_ruby_string, :default)

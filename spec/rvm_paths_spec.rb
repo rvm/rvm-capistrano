@@ -25,6 +25,10 @@ describe "rvm paths" do
     it "should return default bin path" do
       @configuration.fetch(:rvm_bin_path).should == '$HOME/.rvm/bin'
     end
+
+    it "should return default gemset path" do
+      @configuration.fetch(:rvm_gemset_path).should == '$HOME/.rvm/gemsets'
+    end
   end
 
   describe "system mode" do
@@ -39,6 +43,10 @@ describe "rvm paths" do
 
     it "should return system bin path" do
       @configuration.fetch(:rvm_bin_path).should == '/usr/local/rvm/bin'
+    end
+
+    it "should return system gemset path" do
+      @configuration.fetch(:rvm_gemset_path).should == '/usr/local/rvm/gemsets'
     end
   end
 end
