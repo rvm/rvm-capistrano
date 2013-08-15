@@ -23,32 +23,26 @@ rvm_with_capistrano do
     # Let users set the type of their rvm install.
     _cset(:rvm_type, :user)
 
-    # Define rvm_path
+    # Define rvm system and user paths
     # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
     # rvm to boostrap using the proper path.  This is being lost in Capistrano due to the lack of a
     # full environment.
+    _cset(:rvm_system_path, "/usr/local/rvm")
+    _cset(:rvm_user_path,   "$HOME/.rvm")
+
     _cset(:rvm_path) do
       case rvm_type
       when :root, :system
-        "/usr/local/rvm"
+        rvm_system_path
       when :local, :user, :default
-        "$HOME/.rvm/"
+        rvm_user_path
       else
-        rvm_type.to_s.empty? ?  "$HOME/.rvm" : rvm_type.to_s
+        rvm_type.to_s.empty? ? rvm_user_path : rvm_type.to_s
       end
     end
 
     # Let users override the rvm_bin_path
-    _cset(:rvm_bin_path) do
-      case rvm_type
-      when :root, :system
-        "/usr/local/rvm/bin"
-      when :local, :user, :default
-        "$HOME/.rvm/bin"
-      else
-        rvm_type.to_s.empty? ?  "#{rvm_path}/bin" : rvm_type.to_s
-      end
-    end
+    _cset(:rvm_bin_path) { "#{rvm_path}/bin" }
 
     # evaluate :rvm_ruby_string => :local
     set :rvm_ruby_string_evaluated do

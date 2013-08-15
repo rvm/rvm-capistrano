@@ -6,12 +6,20 @@ describe "rvm paths" do
   describe "default values" do
     before { @configuration.trigger(:load) }
 
+    it "should return default system path" do
+      @configuration.fetch(:rvm_system_path).should == '/usr/local/rvm'
+    end
+
+    it "should return default user path" do
+      @configuration.fetch(:rvm_user_path).should == '$HOME/.rvm'
+    end
+
     it "should return default installation mode" do
       @configuration.fetch(:rvm_type).should == :user
     end
 
     it "should return default path" do
-      @configuration.fetch(:rvm_path).should == '$HOME/.rvm/'
+      @configuration.fetch(:rvm_path).should == '$HOME/.rvm'
     end
 
     it "should return default bin path" do
