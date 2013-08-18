@@ -1,3 +1,10 @@
+### 1.5.0.rc1 / 2013-08-18
+
+* Thanks to @aspiers for the great work:
+* add tests
+* add mixed mode support
+* add support for disabling `sudo` based on `:subject_class`
+
 ### 1.4.4 / 2013-08-14
 
 * cleaning, merge #83
