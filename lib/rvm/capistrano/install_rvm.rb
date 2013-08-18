@@ -28,7 +28,7 @@ rvm_with_capistrano do
     EOF
     rvm_task :install_rvm do
       command_fetch    = "curl -L get.rvm.io"
-      command_install  = rvm_if_sudo
+      command_install  = rvm_if_sudo(:subject_class => :rvm)
       command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
       case rvm_type
       when :root, :system
