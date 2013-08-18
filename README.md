@@ -175,6 +175,7 @@ end
  - `:system` - RVM installed in `/usr/local`, multiuser installation
  - (some other values permitted for backwards compatability only)
 
+- `:rvm_user` - arguments to pass to `rvm user`, to enable mixed mode (e.g. system rubies and user gemsets).  Based on whether rvm_user includes :gemsets it also helps determine the correct path for importing/exporting gemsets, and similarly, whether to use sudo for gemset creation/deletion and other operations.
 - `:rvm_autolibs_flag` - control autolibs, read more `rvm help autolibs`
  - `:disable` - fully disable autolibs, limit automated tasks
  - `:read`    - autolibs only in read only mode, do not change anything in system

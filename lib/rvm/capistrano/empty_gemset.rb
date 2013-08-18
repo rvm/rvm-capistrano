@@ -12,7 +12,9 @@ rvm_with_capistrano do
         raise "gemset can not be emptied when using :rvm_ruby_string => :#{ruby}"
       else
         if gemset
-          run_rvm("rvm --force gemset empty #{gemset}", :with_rvm_group => true, :with_ruby => ruby)
+          run_rvm("rvm --force gemset empty #{gemset}",
+                   :with_rvm_group => true, :with_ruby => ruby,
+                   :subject_class => :gemsets)
         end
       end
     end

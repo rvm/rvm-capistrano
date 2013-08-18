@@ -22,6 +22,24 @@ rvm_with_capistrano do
 
     # Let users set the type of their rvm install.
     _cset(:rvm_type, :user)
+    _cset(:rvm_user, [])
+    if rvm_type == :mixed
+      abort "When rvm_type is :mixed, you must also set rvm_user." if rvm_user.empty?
+      abort "rvm_user must be an Array of values, e.g. [ :gemsets ]" unless rvm_user.is_a? Array
+      valid = [ :gemsets, :rubies, :hooks, :pkgs, :wrappers ]
+      invalid = rvm_user - valid - [:all, :none ]
+      abort "Invalid value(s) in rvm_user: " + invalid.join(', ') unless invalid.empty?
+      if rvm_user.size > 1
+        abort "rvm_user cannot mix :none with other values." if rvm_user.include? :none
+        abort "rvm_user cannot mix :all with other values."  if rvm_user.include? :all
+      elsif rvm_user == [ :all ]
+        set(:rvm_user) { valid }
+      end
+    else
+      if ! rvm_user.empty?
+        abort "rvm_user must not be set unless rvm_type is :mixed (was #{rvm_user})."
+      end
+    end
 
     # Define rvm system and user paths
     # This is used in the default_shell command to pass the required variable to rvm-shell, allowing
@@ -32,7 +50,7 @@ rvm_with_capistrano do
 
     _cset(:rvm_path) do
       case rvm_type
-      when :root, :system
+      when :root, :system, :mixed
         rvm_system_path
       when :local, :user, :default
         rvm_user_path
@@ -49,6 +67,8 @@ rvm_with_capistrano do
       case rvm_type
       when :root, :system, :local, :user, :default
         rvm_path
+      when :mixed
+        rvm_user.include?(:gemsets) ? rvm_user_path : rvm_system_path
       else
         rvm_path
       end + "/gemsets"

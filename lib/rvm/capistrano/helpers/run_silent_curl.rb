@@ -1,8 +1,8 @@
 require 'rvm/capistrano/base'
 
 rvm_with_capistrano do
-  def run_silent_curl(command)
-    run_without_rvm(<<-EOF.gsub(/[\s]+/, ' '))
+  def run_silent_curl(command, options={})
+    run_without_rvm(<<-EOF.gsub(/[\s]+/, ' '), options)
       __LAST_STATUS=0;
       export CURL_HOME="${TMPDIR:-${HOME}}/.rvm-curl-config.$$";
       mkdir ${CURL_HOME}/;
