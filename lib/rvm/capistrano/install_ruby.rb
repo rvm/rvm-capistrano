@@ -48,16 +48,14 @@ ruby can not be installed when using :rvm_ruby_string => :#{ruby}
           1 read    read-only
           2 fail    read-fail
         ).include?( autolibs_flag )
+        autolibs_flag = "1" unless autolibs_flag_no_requirements
 
         install_ruby_threads = fetch(:rvm_install_ruby_threads,nil).nil? ? '' : "-j #{rvm_install_ruby_threads}"
-
-        if autolibs_flag_no_requirements
-          command_install << with_rvm_group("#{path_to_bin_rvm} --autolibs=#{autolibs_flag} #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}")
-        else
+        unless autolibs_flag_no_requirements
           command_install << "#{rvm_if_sudo} #{path_to_bin_rvm} --autolibs=#{autolibs_flag} requirements #{ruby}"
           command_install << "; "
-          command_install << with_rvm_group("#{path_to_bin_rvm} --autolibs=1 #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}")
         end
+        command_install << with_rvm_group("#{path_to_bin_rvm} --autolibs=#{autolibs_flag} #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}")
 
         if gemset
           command_install << "; "
