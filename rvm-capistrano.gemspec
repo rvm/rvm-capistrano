@@ -18,7 +18,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'capistrano', '>=2.15.4'
 
   spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'minitest'
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'capistrano-spec'
+  spec.add_development_dependency 'guard-rspec'
+  spec.add_development_dependency 'guard-bundler'
 
   spec.require_path = 'lib'
   spec.files        = YAML.load_file('Manifest.yml')
