@@ -40,7 +40,7 @@ ruby can not be installed when using :rvm_ruby_string => :#{ruby}
 
 "
       else
-        command_install = ""
+        command_install = rvm_user_command(:subject_class => :rubies, :with_ruby=>ruby)
 
         autolibs_flag = fetch(:rvm_autolibs_flag, 2).to_s
         autolibs_flag_no_requirements = %w(
@@ -48,23 +48,21 @@ ruby can not be installed when using :rvm_ruby_string => :#{ruby}
           1 read    read-only
           2 fail    read-fail
         ).include?( autolibs_flag )
+        autolibs_flag = "1" unless autolibs_flag_no_requirements
 
         install_ruby_threads = fetch(:rvm_install_ruby_threads,nil).nil? ? '' : "-j #{rvm_install_ruby_threads}"
-
-        if autolibs_flag_no_requirements
-          command_install << with_rvm_group("#{path_to_bin_rvm} --autolibs=#{autolibs_flag} #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}")
-        else
+        unless autolibs_flag_no_requirements
           command_install << "#{rvm_if_sudo} #{path_to_bin_rvm} --autolibs=#{autolibs_flag} requirements #{ruby}"
           command_install << "; "
-          command_install << with_rvm_group("#{path_to_bin_rvm} --autolibs=1 #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}")
         end
+        command_install << with_rvm_group("#{path_to_bin_rvm} --autolibs=#{autolibs_flag} #{rvm_install_ruby} #{ruby} #{install_ruby_threads} #{rvm_install_ruby_params}", :subject_class => :rubies)
 
         if gemset
           command_install << "; "
-          command_install << with_rvm_group("#{path_to_bin_rvm(:with_ruby=>ruby)} rvm gemset create #{gemset}")
+          command_install << with_rvm_group("#{path_to_bin_rvm(:with_ruby=>ruby)} rvm gemset create #{gemset}", :subject_class => :gemsets)
         end
 
-        run_silent_curl command_install
+        run_silent_curl(command_install, :subject_class => :rubies)
       end
     end
 

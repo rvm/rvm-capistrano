@@ -2,13 +2,6 @@ require 'rvm/capistrano/base'
 
 rvm_with_capistrano do
 
-  deferred_load do
-
-    # Let users configure a path to export/import gemsets
-    _cset(:rvm_gemset_path, "#{rvm_path}/gemsets")
-
-  end
-
   namespace :rvm do
 
     desc <<-EOF

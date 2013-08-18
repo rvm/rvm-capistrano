@@ -16,7 +16,9 @@ rvm_with_capistrano do
 
     desc "Create application wrappers"
     rvm_task :create_wrappers  do
-      run_rvm("wrapper #{rvm_ruby_string_evaluated} --no-prefix --all", :with_rvm_group => true)
+      run_rvm("wrapper #{rvm_ruby_string_evaluated} --no-prefix --all",
+               :with_rvm_group => true,
+               :subject_class => :wrappers)
     end
 
   end

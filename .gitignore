@@ -2,3 +2,4 @@
 .yardoc/
 *.gem
 /Gemfile.lock
+/tmp/rspec_guard_result
