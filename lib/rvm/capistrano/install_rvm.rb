@@ -9,8 +9,7 @@ rvm_with_capistrano do
     # Let users set the install type of their choice.
     _cset(:rvm_install_type, :stable)
 
-    # Let users override the installation url
-    _cset(:rvm_install_url, "get.rvm.io")
+    _cset(:rvm_install_url, "https://get.rvm.io")
 
     # By default system installations add deploying user to rvm group. also try :all
     _cset(:rvm_add_to_group, fetch(:user,"$USER"))
