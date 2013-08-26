@@ -9,6 +9,9 @@ rvm_with_capistrano do
     # Let users set the install type of their choice.
     _cset(:rvm_install_type, :stable)
 
+    # Let users override the installation url
+    _cset(:rvm_install_url, "get.rvm.io")
+
     # By default system installations add deploying user to rvm group. also try :all
     _cset(:rvm_add_to_group, fetch(:user,"$USER"))
 
@@ -27,7 +30,7 @@ rvm_with_capistrano do
       set :rvm_install_shell, :zsh
     EOF
     rvm_task :install_rvm do
-      command_fetch    = "curl -L get.rvm.io"
+      command_fetch    = "curl -L #{rvm_install_url}"
       command_install  = rvm_if_sudo(:subject_class => :rvm)
       command_install << "#{rvm_install_shell} -s #{rvm_install_type} --path #{rvm_path}"
       case rvm_type
