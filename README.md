@@ -33,7 +33,7 @@ modules which allow selecting which parts of it should be included.
 - `base`     - minimal code, does not change behaviors, only provides definitions like `:rvm_shell`
 - `selector` - extends `base` to automatically `set :default_shell`
 - `selector_mixed` - alternative version of `selector` allowing to select which servers should be RVM aware
-- `install_rvm`    - adds task `rvm:install_rvm`
+- `install_rvm`    - adds task `rvm:install_rvm` - it also updates rvm if already installed
 - `install_ruby`   - adds task `rvm:install_ruby`
 - `create_gemset`  - adds task `rvm:create_gemset`
 - `empty_gemset`   - adds task `rvm:empty_gemset`
@@ -61,7 +61,7 @@ require "rvm/capistrano"
 set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
 set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
 
-before 'deploy:setup', 'rvm:install_rvm'  # install RVM
+before 'deploy:setup', 'rvm:install_rvm'  # install/update RVM
 before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset, OR:
 # before 'deploy:setup', 'rvm:create_gemset' # only create gemset
 ```
@@ -84,7 +84,7 @@ require "rvm/capistrano"
 
 set :rvm_ruby_string, :local        # use the same ruby as used locally for deployment
 
-before 'deploy', 'rvm:install_rvm'  # update RVM
+before 'deploy', 'rvm:install_rvm'  # install/update RVM
 before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
 ```
 
@@ -213,7 +213,7 @@ cap rvm:create_gemset        # Create gemset
 cap rvm:export_gemset        # Export the current RVM ruby gemset contents to a file.
 cap rvm:import_gemset        # Import file contents to the current RVM ruby gemset.
 cap rvm:install_ruby         # Install RVM ruby to the server, create gemset ...
-cap rvm:install_rvm          # Install RVM of the given choice to the server.
+cap rvm:install_rvm          # Install/update RVM of the given choice to the server.
 cap rvm:install_pkgs         # Install RVM packages to the server.
 cap rvm:install_gem   GEM=my_gem  # Install gem {my_gem} on the server using selected ruby.
                                   # Use `ENV['GEM'] = "bundler"` in script to specify gems.
