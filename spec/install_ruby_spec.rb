@@ -25,8 +25,7 @@ describe "rvm:install_ruby task" do
       rm -rf $CURL_HOME;
       exit ${__LAST_STATUS}
     EOSHELL
-    @configuration.should_receive(:run_without_rvm) \
-      .with(expected, :subject_class => :rubies)
+    @configuration.should_receive(:run_without_rvm).with(expected)
     @configuration.execute_task @task
   end
 
@@ -55,8 +54,7 @@ describe "rvm:install_ruby task" do
       rm -rf $CURL_HOME;
       exit ${__LAST_STATUS}
     EOSHELL
-    @configuration.should_receive(:run_without_rvm) \
-      .with(expected, :subject_class => :rubies)
+    @configuration.should_receive(:run_without_rvm).with(expected)
     @configuration.execute_task @task
   end
 
@@ -87,8 +85,7 @@ describe "rvm:install_ruby task" do
         rm -rf $CURL_HOME;
         exit ${__LAST_STATUS}
       EOSHELL
-      @configuration.should_receive(:run_without_rvm) \
-        .with(expected, :subject_class => :rubies)
+      @configuration.should_receive(:run_without_rvm).with(expected)
       @configuration.execute_task @task
     end
   end
@@ -116,8 +113,7 @@ describe "rvm:install_ruby task" do
         rm -rf $CURL_HOME;
         exit ${__LAST_STATUS}
       EOSHELL
-      @configuration.should_receive(:run_without_rvm) \
-        .with(expected, :subject_class => :rubies)
+      @configuration.should_receive(:run_without_rvm).with(expected)
       @configuration.execute_task @task
     end
   end
