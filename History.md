@@ -1,3 +1,7 @@
+### 1.5.0 / 2013-09-04
+
+* Add rvm:info & rvm:list for easier debugging
+
 ### 1.5.0.rc1 / 2013-08-18
 
 * Thanks to @aspiers for the great work:
