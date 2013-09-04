@@ -1,6 +1,7 @@
 # Recipes for using RVM on a server with capistrano.
 
 require 'rvm/capistrano/selector'
+require 'rvm/capistrano/info_list'
 require 'rvm/capistrano/install_rvm'
 require 'rvm/capistrano/install_ruby'
 require 'rvm/capistrano/create_gemset'

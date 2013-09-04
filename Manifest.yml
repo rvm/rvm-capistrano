@@ -10,6 +10,7 @@
 - lib/rvm/capistrano/empty_gemset.rb
 - lib/rvm/capistrano/gem_install_uninstall.rb
 - lib/rvm/capistrano/gemset_import_export.rb
+- lib/rvm/capistrano/info_list.rb
 - lib/rvm/capistrano/install_pkgs.rb
 - lib/rvm/capistrano/install_ruby.rb
 - lib/rvm/capistrano/install_rvm.rb

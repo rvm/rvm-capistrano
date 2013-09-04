@@ -33,6 +33,7 @@ modules which allow selecting which parts of it should be included.
 - `base`     - minimal code, does not change behaviors, only provides definitions like `:rvm_shell`
 - `selector` - extends `base` to automatically `set :default_shell`
 - `selector_mixed` - alternative version of `selector` allowing to select which servers should be RVM aware
+- `info_list`      - adds tasks `rvm:info`, `rvm:list` and `rvm:info_list`
 - `install_rvm`    - adds task `rvm:install_rvm` - it also updates rvm if already installed
 - `install_ruby`   - adds task `rvm:install_ruby`
 - `create_gemset`  - adds task `rvm:create_gemset`
@@ -42,7 +43,7 @@ modules which allow selecting which parts of it should be included.
 - `gemset_import_export`  - adds tasks `rvm:import_gemset` / `rvm:export_gemset`
 - `alias_and_wrapp`       - adds tasks `rvm:create_alias`  / `rvm:create_wrappers` / `rvm:show_alias_path`
 
-By default `rvm/capistrano` loads: `selector`, `install_rvm`, `install_ruby`, `create_gemset`.
+By default `rvm/capistrano` loads: `selector`, `info_list`, `install_rvm`, `install_ruby`, `create_gemset`.
 
 Warning: `selector` and `selector_mixed` are to be used separately they can not be used both at the same time.
 
@@ -163,6 +164,12 @@ task :example do
 end
 ```
 
+### Show info on remote rvm and list rubies
+
+```bash
+cap rvm:info_list
+```
+
 ## Options
 
 - `:rvm_ruby_string` - which ruby should be loaded
@@ -212,6 +219,9 @@ $ cap -T rvm
 cap rvm:create_gemset        # Create gemset
 cap rvm:export_gemset        # Export the current RVM ruby gemset contents to a file.
 cap rvm:import_gemset        # Import file contents to the current RVM ruby gemset.
+cap rvm:info                 # Show rvm info
+cap rvm:info_list            # Show info and list rubies
+cap rvm:list                 # List rvm rubies
 cap rvm:install_ruby         # Install RVM ruby to the server, create gemset ...
 cap rvm:install_rvm          # Install/update RVM of the given choice to the server.
 cap rvm:install_pkgs         # Install RVM packages to the server.
