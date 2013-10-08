@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.description = 'RVM / Capistrano Integration Gem'
   spec.license     = 'MIT'
 
-  spec.add_dependency 'capistrano', '>=2.15.4'
+  spec.add_dependency 'capistrano', '~>2.15.4'
 
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
