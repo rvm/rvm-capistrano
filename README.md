@@ -6,8 +6,8 @@ RVM / Capistrano Integration Gem
 
 ## Compatibility
 
-`rvm-capistrano` `1.3.0` with Autolibs requires at least RVM `1.19.0`.
-`capistrano` `3.0.0` is a rewrite and does not work with this gem, use [`rvm1/capistrano3`](https://github.com/rvm/rvm1-capistrano3) it will be extended to match this gem functionality.
+- `rvm-capistrano` `1.3.0` with Autolibs requires at least RVM `1.19.0`.
+- `capistrano` `3.0.0` is a rewrite and does not work with this gem, use [`rvm1/capistrano3`](https://github.com/rvm/rvm1-capistrano3) it will be extended to match this gem functionality.
 
 ## Installation
 
