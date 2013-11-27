@@ -117,7 +117,7 @@ This will allow to use clean scripts where proper RVM settings are automatically
 from the aliased wrappers. For example configuring
 [PassengerRuby](http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerRuby)
 with `/home/ad/.rvm//wrappers/ad/ruby`, this way there is no need for changing scripts
-when the application ruby changes. In the seem spirit you can use wrapper for `bundle`
+when the application ruby changes. In the same spirit you can use wrapper for `bundle`
 in **cron** or **init.d** scripts with `/home/ad/.rvm//wrappers/ad/bundle exec [command]` -
 it will automatically load proper configuration for the application, no need for any tricks.
 
