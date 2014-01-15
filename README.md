@@ -48,6 +48,16 @@ By default `rvm/capistrano` loads: `selector`, `info_list`, `install_rvm`, `inst
 
 Warning: `selector` and `selector_mixed` are to be used separately they can not be used both at the same time.
 
+## Requiring
+
+Minimal code to load this gem is:
+
+```ruby
+require "rvm/capistrano"
+```
+
+Usually it's placed in `config/deploy.rb`.
+
 ## Example
 
 The following code will:
