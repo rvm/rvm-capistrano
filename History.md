@@ -1,3 +1,12 @@
+### 1.5.2 / 2014-05-31
+
+* Documentation updates #96, #98
+* Use RUBY_VERSION when available for autodetecting the version, merged #99 by @naemono
+
+### 1.5.1 / 2013-10-08
+
+* Fix curl silencing #91 by @aspiers
+
 ### 1.5.0 / 2013-09-04
 
 * Add rvm:info & rvm:list for easier debugging
