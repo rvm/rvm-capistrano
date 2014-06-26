@@ -77,7 +77,7 @@ rvm_with_capistrano do
     set :rvm_ruby_string_evaluated do
       value = fetch(:rvm_ruby_string, :default)
       if value.to_sym == :local
-        if defined? ENV['RUBY_VERSION']
+        unless ENV['RUBY_VERSION'].nil?
           value = ENV['RUBY_VERSION'].gsub('ruby-','')
         else
           value = ENV['GEM_HOME'].gsub(/.*\//,"")
