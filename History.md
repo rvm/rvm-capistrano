@@ -1,3 +1,7 @@
+### 1.5.3 / 2014-06-27
+
+* Fix defined? check on ENV, merged #101 by @themilkman
+
 ### 1.5.2 / 2014-05-31
 
 * Documentation updates #96, #98
