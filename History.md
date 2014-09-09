@@ -1,3 +1,7 @@
+### 1.5.4 / 2014-09-09
+
+* Revert "Using environment variable RUBY_VERSION if it exists, and failing back to GEM_HOME.", fix #100, update #99
+
 ### 1.5.3 / 2014-06-27
 
 * Fix defined? check on ENV, merged #101 by @themilkman
