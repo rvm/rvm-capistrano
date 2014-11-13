@@ -17,7 +17,7 @@ RVM / Capistrano integration is available as a separate gem
 $ gem install rvm-capistrano
 ```
 
-Or, if the **capistrano** gem is aleady in your `Gemfile`, then add **rvm-capistrano**:
+Or, if the **capistrano** gem is already in your `Gemfile`, then add **rvm-capistrano**:
 
 ```bash
 $ echo "gem 'rvm-capistrano'" >> Gemfile
