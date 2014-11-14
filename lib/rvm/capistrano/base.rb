@@ -77,7 +77,12 @@ rvm_with_capistrano do
     set :rvm_ruby_string_evaluated do
       value = fetch(:rvm_ruby_string, :default)
       if value.to_sym == :local
-        value = ENV['GEM_HOME'].gsub(/.*\//,"")
+        if ENV['RBENV_VERSION']
+          gem_set = ENV['GEM_HOME'].match(/(?:\/gemsets\/(.*))$/).to_a[1]
+          value = [ENV['RBENV_VERSION'], gem_set].compact.join("@")
+        else
+          value = ENV['GEM_HOME'].gsub(/.*\//,"")
+        end
       end
       value.to_s
     end
