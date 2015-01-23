@@ -48,7 +48,6 @@ ruby can not be installed when using :rvm_ruby_string => :#{ruby}
           1 read    read-only
           2 fail    read-fail
         ).include?( autolibs_flag )
-        autolibs_flag = "1" unless autolibs_flag_no_requirements
 
         install_ruby_threads = fetch(:rvm_install_ruby_threads,nil).nil? ? '' : "-j #{rvm_install_ruby_threads}"
         unless autolibs_flag_no_requirements
