@@ -7,27 +7,27 @@ describe "rvm paths" do
     before { @configuration.trigger(:load) }
 
     it "should return default system path" do
-      @configuration.fetch(:rvm_system_path).should == '/usr/local/rvm'
+      expect(@configuration.fetch(:rvm_system_path)).to eq('/usr/local/rvm')
     end
 
     it "should return default user path" do
-      @configuration.fetch(:rvm_user_path).should == '$HOME/.rvm'
+      expect(@configuration.fetch(:rvm_user_path)).to eq('$HOME/.rvm')
     end
 
     it "should return default installation mode" do
-      @configuration.fetch(:rvm_type).should == :user
+      expect(@configuration.fetch(:rvm_type)).to eq(:user)
     end
 
     it "should return default path" do
-      @configuration.fetch(:rvm_path).should == '$HOME/.rvm'
+      expect(@configuration.fetch(:rvm_path)).to eq('$HOME/.rvm')
     end
 
     it "should return default bin path" do
-      @configuration.fetch(:rvm_bin_path).should == '$HOME/.rvm/bin'
+      expect(@configuration.fetch(:rvm_bin_path)).to eq('$HOME/.rvm/bin')
     end
 
     it "should return default gemset path" do
-      @configuration.fetch(:rvm_gemset_path).should == '$HOME/.rvm/gemsets'
+      expect(@configuration.fetch(:rvm_gemset_path)).to eq('$HOME/.rvm/gemsets')
     end
   end
 
@@ -38,15 +38,15 @@ describe "rvm paths" do
     end
 
     it "should return default path" do
-      @configuration.fetch(:rvm_path).should == '/usr/local/rvm'
+      expect(@configuration.fetch(:rvm_path)).to eq('/usr/local/rvm')
     end
 
     it "should return system bin path" do
-      @configuration.fetch(:rvm_bin_path).should == '/usr/local/rvm/bin'
+      expect(@configuration.fetch(:rvm_bin_path)).to eq('/usr/local/rvm/bin')
     end
 
     it "should return system gemset path" do
-      @configuration.fetch(:rvm_gemset_path).should == '/usr/local/rvm/gemsets'
+      expect(@configuration.fetch(:rvm_gemset_path)).to eq('/usr/local/rvm/gemsets')
     end
   end
 
@@ -55,38 +55,38 @@ describe "rvm paths" do
       before { @configuration.set(:rvm_type, :mixed) }
 
       it "should abort if rvm_type is :mixed and rvm_user empty" do
-        lambda { @configuration.trigger(:load) }.should \
+        expect { @configuration.trigger(:load) }.to \
           raise_error(/When rvm_type is :mixed, you must also set rvm_user/)
       end
 
       it "should abort if rvm_user isn't an Array" do
         @configuration.set(:rvm_user, "a string")
-        lambda { @configuration.trigger(:load) }.should \
+        expect { @configuration.trigger(:load) }.to \
           raise_error(/rvm_user must be an Array/)
       end
 
       it "should abort if rvm_user contains an invalid value" do
         @configuration.set(:rvm_user, [ :invalid_value ])
-        lambda { @configuration.trigger(:load) }.should \
+        expect { @configuration.trigger(:load) }.to \
           raise_error(/Invalid value\(s\) in rvm_user: invalid_value/)
       end
 
       it "should abort if rvm_user mixes :none with other values" do
         @configuration.set(:rvm_user, [ :none, :gemsets ])
-        lambda { @configuration.trigger(:load) }.should \
+        expect { @configuration.trigger(:load) }.to \
           raise_error(/rvm_user cannot mix :none with other values/)
       end
 
       it "should abort if rvm_user mixes :all with other values" do
         @configuration.set(:rvm_user, [ :gemsets, :all ])
-        lambda { @configuration.trigger(:load) }.should \
+        expect { @configuration.trigger(:load) }.to \
           raise_error(/rvm_user cannot mix :all with other values/)
       end
     end
 
     it "should abort if rvm_user is set and rvm_type isn't :mixed" do
       @configuration.set(:rvm_user, [ :gemsets ])
-      lambda { @configuration.trigger(:load) }.should \
+      expect { @configuration.trigger(:load) }.to \
         raise_error(/rvm_user must not be set unless rvm_type is :mixed/)
     end
   end

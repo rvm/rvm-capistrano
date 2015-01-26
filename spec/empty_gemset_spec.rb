@@ -13,7 +13,7 @@ describe "rvm:create_gemset task" do
   it "should empty a gemset in $HOME" do
     @configuration.trigger :load
     expected = "$HOME/.rvm/bin/rvm 2.0.0 do rvm --force gemset empty #{@gemset}"
-    @task.namespace.should_receive(:run_without_rvm).with(expected)
+    expect(@task.namespace).to receive(:run_without_rvm).with(expected)
     @configuration.execute_task @task
   end
 
@@ -26,7 +26,7 @@ describe "rvm:create_gemset task" do
       else sudo -p 'sudo password: '  sg rvm -c '/usr/local/rvm/bin/rvm 2.0.0 do rvm --force gemset empty #{@gemset}' ;
       fi
     EOSHELL
-    @task.namespace.should_receive(:run_without_rvm).with(expected)
+    expect(@task.namespace).to receive(:run_without_rvm).with(expected)
     @configuration.execute_task @task
   end
 end
