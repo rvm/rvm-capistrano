@@ -12,7 +12,7 @@ describe "rvm:create_gemset task" do
   it "should create a gemset in $HOME" do
     @configuration.trigger :load
     expected = "$HOME/.rvm/bin/rvm 2.0.0 do rvm gemset create #{@gemset}"
-    @task.namespace.should_receive(:run_without_rvm).with(expected)
+    expect(@task.namespace).to receive(:run_without_rvm).with(expected)
     @configuration.execute_task @task
   end
 
@@ -25,7 +25,7 @@ describe "rvm:create_gemset task" do
       else sudo -p 'sudo password: '  sg rvm -c '/usr/local/rvm/bin/rvm 2.0.0 do rvm gemset create #{@gemset}' ;
       fi
     EOSHELL
-    @task.namespace.should_receive(:run_without_rvm).with(expected)
+    expect(@task.namespace).to receive(:run_without_rvm).with(expected)
     @configuration.execute_task @task
   end
 
@@ -38,7 +38,7 @@ describe "rvm:create_gemset task" do
     expected = \
       "/usr/local/rvm/bin/rvm 2.0.0 do rvm user gemsets ; " +
       "/usr/local/rvm/bin/rvm 2.0.0 do rvm gemset create #{@gemset}"
-    task.namespace.should_receive(:run_without_rvm).with(expected)
+    expect(task.namespace).to receive(:run_without_rvm).with(expected)
     @configuration.execute_task task
   end
 end
