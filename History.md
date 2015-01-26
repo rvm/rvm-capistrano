@@ -1,3 +1,7 @@
+### 1.5.6 / 2015-01-26
+
+* Fix setting of RVM autolibs flag so that 'packages' and 'enable' options work
+
 ### 1.5.4 / 2014-09-09
 
 * Revert "Using environment variable RUBY_VERSION if it exists, and failing back to GEM_HOME.", fix #100, update #99
