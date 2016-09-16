@@ -185,6 +185,7 @@ cap rvm:info_list
 
 - `:rvm_ruby_string` - which ruby should be loaded
  - `release_path` - load ruby defined in `#{release_path}` - Capistrano variable pointing where code is checked out
+ - `latest_release` - load ruby defined in `#{release_path}`, if it exists, or `#{current_path}`
  - `local` - detect local machine running ruby using `GEM_HOME`
  - `<ruby-version>` - specify ruby version to use
 
