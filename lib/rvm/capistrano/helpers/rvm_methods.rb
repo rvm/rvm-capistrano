@@ -10,7 +10,7 @@ module Capistrano
     end
 
     # allow running tasks without using rvm_shell
-    def run_without_rvm(command)
+    def run_without_rvm(command, options={})
       run command, :shell => "#{rvm_install_shell}"
     end
 
